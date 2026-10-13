@@ -12,6 +12,11 @@
   "attributes": {
     "nome": { "type": "string", "required": true, "unique": true },
     "slug": { "type": "uid", "targetField": "nome" },
+    "nomeCorporativo": { "type": "string" },
+    "paisSede": { "type": "string" },
+    "anoFundacao": { "type": "integer" },
+    "regiao": { "type": "string" },
+    "situacao": { "type": "string" },
     "marcaDonos": {
       "type": "relation",
       "relation": "oneToMany",

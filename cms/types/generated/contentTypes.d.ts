@@ -455,6 +455,7 @@ export interface ApiGrupoGrupo extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    anoFundacao: Schema.Attribute.Integer;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -468,7 +469,11 @@ export interface ApiGrupoGrupo extends Struct.CollectionTypeSchema {
     nome: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
+    nomeCorporativo: Schema.Attribute.String;
+    paisSede: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    regiao: Schema.Attribute.String;
+    situacao: Schema.Attribute.String;
     slug: Schema.Attribute.UID<'nome'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -520,6 +525,7 @@ export interface ApiMarcaMarca extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    categoriaPrincipal: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -536,8 +542,12 @@ export interface ApiMarcaMarca extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     logo: Schema.Attribute.Media<'images'>;
     modelos: Schema.Attribute.Relation<'oneToMany', 'api::modelo.modelo'>;
-    nome: Schema.Attribute.String & Schema.Attribute.Required;
+    nome: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    paisOrigem: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    situacao: Schema.Attribute.String;
     slug: Schema.Attribute.UID<'nome'>;
     tipo: Schema.Attribute.Enumeration<['Carros', 'Motos']> &
       Schema.Attribute.Required &

@@ -1,5 +1,7 @@
 'use strict';
 
+const gruposMarcasSeed = require('./data/grupos-marcas-seed');
+
 module.exports = {
   /**
    * An asynchronous register function that runs before
@@ -42,9 +44,144 @@ module.exports = {
     }
 
     await seedExampleData(strapi);
+    await importGruposMarcas(strapi);
+    await fixSituacao(strapi);
+    await limparDonosDuplicados(strapi);
     await fixMissingSlugs(strapi);
   },
 };
+
+// O seed de exemplo (5 marcas) e a importacao do PDF se sobrepoem em
+// Chevrolet/Opel/Fiat/Honda/Volkswagen, criando periodos de dono repetidos.
+// Remove duplicatas exatas (mesma marca+grupo+ano de entrada) e, no caso da
+// Opel, fica com o ano mais preciso do PDF (Stellantis desde 2021, nao 2017 —
+// a Opel ficou com a PSA sozinha entre 2017 e a fusao que criou a Stellantis).
+async function limparDonosDuplicados(strapi) {
+  const todos = await strapi.documents('api::marca-dono.marca-dono').findMany({
+    populate: ['marca', 'grupo'],
+    pagination: { pageSize: 500 },
+  });
+
+  const vistos = new Set();
+  for (const dono of todos) {
+    if (!dono.marca || !dono.grupo) continue;
+    const chave = `${dono.marca.nome}|${dono.grupo.nome}|${dono.de}`;
+    const chaveObsoleta = dono.marca.nome === 'Opel' && dono.grupo.nome === 'Stellantis' && dono.de === 2017;
+
+    if (vistos.has(chave) || chaveObsoleta) {
+      await strapi.documents('api::marca-dono.marca-dono').delete({ documentId: dono.documentId });
+    } else {
+      vistos.add(chave);
+    }
+  }
+}
+
+// Correcao pontual: o campo "status" tinha o mesmo nome do parametro
+// reservado do Strapi (rascunho/publicado) e foi renomeado para "situacao".
+// Isso preenche os registros que ja foram criados antes da renomeacao.
+async function fixSituacao(strapi) {
+  const sentinela = await strapi.documents('api::marca.marca').findFirst({ filters: { nome: 'Opel' } });
+  if (sentinela && sentinela.situacao === 'Ativa') return;
+
+  for (const regiaoBlock of gruposMarcasSeed) {
+    for (const g of regiaoBlock.grupos) {
+      const grupoDoc = await strapi.documents('api::grupo.grupo').findFirst({ filters: { nome: g.nome } });
+      if (grupoDoc) {
+        await strapi.documents('api::grupo.grupo').update({
+          documentId: grupoDoc.documentId,
+          data: { situacao: g.status },
+          status: 'published',
+        });
+      }
+
+      for (const m of g.marcas) {
+        const marcaDoc = await strapi.documents('api::marca.marca').findFirst({ filters: { nome: m.nome } });
+        if (marcaDoc) {
+          await strapi.documents('api::marca.marca').update({
+            documentId: marcaDoc.documentId,
+            data: { situacao: m.status },
+            status: 'published',
+          });
+        }
+      }
+    }
+  }
+}
+
+function gerarIniciais(nome) {
+  const palavras = nome.split(/\s+/).filter(Boolean);
+  if (palavras.length >= 2) return (palavras[0][0] + palavras[1][0]).toUpperCase();
+  return nome.slice(0, 2).toUpperCase();
+}
+
+async function importGruposMarcas(strapi) {
+  const jaImportado = await strapi.documents('api::grupo.grupo').findFirst({
+    filters: { nome: 'Toyota Motor Corporation' },
+  });
+  if (jaImportado) return;
+
+  const grupoDocIds = {};
+
+  for (const regiaoBlock of gruposMarcasSeed) {
+    for (const g of regiaoBlock.grupos) {
+      let grupoDoc = await strapi.documents('api::grupo.grupo').findFirst({ filters: { nome: g.nome } });
+      if (!grupoDoc) {
+        grupoDoc = await strapi.documents('api::grupo.grupo').create({
+          data: {
+            nome: g.nome,
+            nomeCorporativo: g.nomeCorporativo,
+            paisSede: g.paisSede,
+            anoFundacao: g.anoFundacao,
+            regiao: regiaoBlock.regiao,
+            situacao: g.status,
+          },
+          status: 'published',
+        });
+      }
+      grupoDocIds[g.nome] = grupoDoc.documentId;
+
+      for (const m of g.marcas) {
+        let marcaDoc = await strapi.documents('api::marca.marca').findFirst({ filters: { nome: m.nome } });
+        if (!marcaDoc) {
+          marcaDoc = await strapi.documents('api::marca.marca').create({
+            data: {
+              nome: m.nome,
+              tipo: m.categoriaPrincipal.includes('Motocicletas') ? 'Motos' : 'Carros',
+              iniciais: gerarIniciais(m.nome),
+              categoriaPrincipal: m.categoriaPrincipal,
+              paisOrigem: m.paisOrigem,
+              situacao: m.status,
+            },
+            status: 'published',
+          });
+        } else {
+          await strapi.documents('api::marca.marca').update({
+            documentId: marcaDoc.documentId,
+            data: { categoriaPrincipal: m.categoriaPrincipal, paisOrigem: m.paisOrigem, situacao: m.status },
+            status: 'published',
+          });
+        }
+
+        let donoExistente;
+        try {
+          donoExistente = await strapi.documents('api::marca-dono.marca-dono').findFirst({
+            filters: { marca: marcaDoc.documentId, grupo: grupoDocIds[g.nome], de: m.de },
+          });
+        } catch (e) {
+          donoExistente = null;
+        }
+
+        if (!donoExistente) {
+          await strapi.documents('api::marca-dono.marca-dono').create({
+            data: { marca: marcaDoc.documentId, grupo: grupoDocIds[g.nome], de: m.de, ate: m.ate },
+          });
+        }
+      }
+    }
+  }
+
+  strapi.log.info('Importação de grupos e marcas (PDF) concluída.');
+}
 
 function slugify(s) {
   const semAcento = s.normalize('NFD').replace(/[̀-ͯ]/g, '');

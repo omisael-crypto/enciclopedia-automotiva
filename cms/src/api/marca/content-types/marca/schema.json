@@ -10,7 +10,7 @@
   "options": { "draftAndPublish": true },
   "pluginOptions": {},
   "attributes": {
-    "nome": { "type": "string", "required": true },
+    "nome": { "type": "string", "required": true, "unique": true },
     "slug": { "type": "uid", "targetField": "nome" },
     "tipo": {
       "type": "enumeration",
@@ -19,6 +19,9 @@
       "required": true
     },
     "iniciais": { "type": "string", "maxLength": 3 },
+    "categoriaPrincipal": { "type": "string" },
+    "paisOrigem": { "type": "string" },
+    "situacao": { "type": "string" },
     "logo": {
       "type": "media",
       "multiple": false,
