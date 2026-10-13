@@ -946,11 +946,13 @@
 <footer-note>Protótipo visual — dados de exemplo, sem fichas técnicas reais ainda.</footer-note>
 
 <script>
-// Endereço do backend Strapi. Só responde quando o Strapi está rodando na
-// mesma máquina de quem está vendo a página (ex: o próprio Misael testando
-// localmente) — em qualquer outro computador, o fetch falha e o site cai
-// automaticamente nos dados de exemplo abaixo, pra nunca ficar em branco.
-const API_URL = "http://localhost:1337";
+// Endereço do backend Strapi. Usa um túnel público (Cloudflare) que aponta
+// pro Strapi rodando no computador do Misael — assim funciona de qualquer
+// lugar (celular, outro computador). Esse endereço muda toda vez que o túnel
+// é reiniciado; se o Strapi estiver desligado ou o túnel tiver mudado, o
+// fetch falha e o site cai automaticamente nos dados de exemplo abaixo, pra
+// nunca ficar em branco.
+const API_URL = "https://indiana-whatever-very-packages.trycloudflare.com";
 
 // Cada marca tem uma lista de "models". Cada model tem "versions" com todas
 // as gerações/facelifts em ordem cronológica — é por isso que a seta percorre
