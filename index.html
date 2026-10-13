@@ -289,7 +289,7 @@
     width: 36px;
     height: 36px;
     border-radius: 8px;
-    background: var(--accent);
+    background: var(--marca-cor, var(--accent));
     color: #1a1d24;
     display: flex;
     align-items: center;
@@ -333,7 +333,7 @@
   }
 
   .owner-bar-seg.past { background: #3a3f4a; }
-  .owner-bar-seg.current { background: var(--accent); }
+  .owner-bar-seg.current { background: var(--marca-cor, var(--accent)); }
 
   .owner-labels {
     display: flex;
@@ -346,7 +346,7 @@
     color: var(--muted);
   }
 
-  .owner-label.current { color: var(--accent); font-weight: 600; }
+  .owner-label.current { color: var(--marca-cor, var(--accent)); font-weight: 600; }
 
   .controls {
     display: flex;
@@ -444,6 +444,7 @@
   .card {
     background: var(--card-bg);
     border: 1px solid var(--border);
+    border-top: 3px solid var(--marca-cor, var(--accent));
     border-radius: 12px;
     overflow: hidden;
     display: flex;
@@ -468,7 +469,7 @@
     position: relative;
     aspect-ratio: 4 / 3;
     background:
-      radial-gradient(120% 140% at 20% 15%, color-mix(in oklch, var(--accent) 16%, transparent), transparent 55%),
+      radial-gradient(120% 140% at 20% 15%, color-mix(in oklch, var(--marca-cor, var(--accent)) 20%, transparent), transparent 55%),
       linear-gradient(160deg, #2e333d, #1c1f26);
     display: flex;
     align-items: center;
@@ -532,7 +533,7 @@
   }
 
   .dot.active {
-    background: var(--accent);
+    background: var(--marca-cor, var(--accent));
   }
 
   .info {
@@ -548,7 +549,8 @@
 
   .version-label {
     font-size: 12.5px;
-    color: var(--accent);
+    color: var(--marca-cor, var(--accent));
+    font-weight: 600;
     margin: 0 0 4px;
     min-height: 16px;
   }
@@ -557,6 +559,35 @@
     font-size: 12px;
     color: var(--muted);
     margin: 0;
+  }
+
+  .stats-row {
+    display: flex;
+    border-top: 1px solid var(--border);
+    margin-top: 10px;
+  }
+
+  .stat-chip {
+    flex: 1;
+    padding: 8px 10px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+
+  .stat-chip:last-child { border-right: none; }
+
+  .stat-chip .valor {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .stat-chip .rotulo {
+    font-size: 9.5px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 1px;
   }
 
   .no-results {
@@ -982,28 +1013,18 @@
         <h2>Filtros</h2>
         <button id="filters-close">✕</button>
       </div>
-      <div class="filters-body">
+      <div class="filters-body" id="filters-body">
         <div class="filter-group">
           <h3>Categoria</h3>
-          <label class="filter-option"><input type="checkbox" data-group="categoria" value="Sedã"> Sedã</label>
-          <label class="filter-option"><input type="checkbox" data-group="categoria" value="Hatch"> Hatch</label>
-          <label class="filter-option"><input type="checkbox" data-group="categoria" value="Moto"> Moto</label>
+          <div id="filter-categoria"></div>
         </div>
         <div class="filter-group">
           <h3>Motorização</h3>
-          <label class="filter-option"><input type="checkbox" data-group="motor" value="4 cilindros"> 4 cilindros</label>
-          <label class="filter-option"><input type="checkbox" data-group="motor" value="V6"> V6</label>
-          <label class="filter-option"><input type="checkbox" data-group="motor" value="V8"> V8</label>
-          <label class="filter-option"><input type="checkbox" data-group="motor" value="Bicilíndrico"> Bicilíndrico</label>
+          <div id="filter-motor"></div>
         </div>
         <div class="filter-group">
           <h3>Década</h3>
-          <label class="filter-option"><input type="checkbox" data-group="decada" value="1960s"> 1960s</label>
-          <label class="filter-option"><input type="checkbox" data-group="decada" value="1970s"> 1970s</label>
-          <label class="filter-option"><input type="checkbox" data-group="decada" value="1980s"> 1980s</label>
-          <label class="filter-option"><input type="checkbox" data-group="decada" value="1990s"> 1990s</label>
-          <label class="filter-option"><input type="checkbox" data-group="decada" value="2000s"> 2000s</label>
-          <label class="filter-option"><input type="checkbox" data-group="decada" value="2010s"> 2010s</label>
+          <div id="filter-decada"></div>
         </div>
       </div>
       <div class="filters-footer">
@@ -1440,11 +1461,19 @@ const noResults = document.getElementById("no-results");
 let currentBrand = null;
 let cardEntries = [];
 
+const PALETA_MARCAS = ["#e63946", "#0077b6", "#40916c", "#e0a900", "#c1121f", "#7209b7", "#0096c7", "#f3722c", "#43aa8b"];
+function corDaMarca(nome) {
+  let hash = 0;
+  for (let i = 0; i < nome.length; i++) hash = (hash * 31 + nome.charCodeAt(i)) >>> 0;
+  return PALETA_MARCAS[hash % PALETA_MARCAS.length];
+}
+
 function showHome() {
   homeEl.classList.add("open");
   headerEl.classList.remove("open");
   layoutEl.classList.remove("open");
   detailEl.classList.remove("open");
+  document.documentElement.style.removeProperty("--marca-cor");
 
   document.getElementById("home-subtitle").textContent =
     "Da fundação das marcas às gerações mais recentes — pesquisado e revisado antes de publicar.";
@@ -1466,9 +1495,10 @@ function showBrand(brand) {
   currentBrand = brand;
   brandLogo.textContent = brand.initials;
   brandName.textContent = brand.name;
+  document.documentElement.style.setProperty("--marca-cor", corDaMarca(brand.name));
   renderOwnerTimeline(brand);
 
-  checkboxes.forEach((cb) => (cb.checked = false));
+  renderFilterOptions(brand.models);
   buildGrid(brand.models);
   applyFilters();
 
@@ -1523,18 +1553,27 @@ function buildGrid(models) {
     modelName.textContent = item.model;
     const versionLabelEl = document.createElement("p");
     versionLabelEl.className = "version-label";
-    const years = document.createElement("p");
-    years.className = "years";
-    years.textContent = `${item.versions.length} geração${item.versions.length > 1 ? "ões/versões" : ""} cadastrada${item.versions.length > 1 ? "s" : ""}`;
+
+    const statsRow = document.createElement("div");
+    statsRow.className = "stats-row";
+    const statPeriodo = document.createElement("div");
+    statPeriodo.className = "stat-chip";
+    statPeriodo.innerHTML = '<div class="valor"></div><div class="rotulo">Período</div>';
+    const statCategoria = document.createElement("div");
+    statCategoria.className = "stat-chip";
+    statCategoria.innerHTML = `<div class="valor">${item.categoria || "—"}</div><div class="rotulo">Categoria</div>`;
+    statsRow.appendChild(statPeriodo);
+    statsRow.appendChild(statCategoria);
 
     info.appendChild(modelName);
     info.appendChild(versionLabelEl);
-    info.appendChild(years);
+    info.appendChild(statsRow);
 
     function render() {
       const v = item.versions[current];
       versionLabelEl.textContent = versionLabel(v);
       yearBadge.textContent = v.years;
+      statPeriodo.querySelector(".valor").textContent = v.years;
     }
 
     if (item.versions.length > 1) {
@@ -1596,7 +1635,46 @@ const filtersBackdrop = document.getElementById("filters-backdrop");
 const filtersClose = document.getElementById("filters-close");
 const filtersClear = document.getElementById("filters-clear");
 const filtersApply = document.getElementById("filters-apply");
-const checkboxes = Array.from(document.querySelectorAll("#filters input[type=checkbox]"));
+let checkboxes = [];
+
+function renderFilterOptions(models) {
+  const categorias = new Set();
+  const motores = new Set();
+  const decadas = new Set();
+
+  models.forEach((item) => {
+    (item.categoria || "").split("/").map((s) => s.trim()).filter(Boolean).forEach((c) => categorias.add(c));
+    item.versions.forEach((v) => {
+      (v.motor || []).forEach((m) => motores.add(m));
+      if (v.decada) decadas.add(v.decada);
+    });
+  });
+
+  const grupos = [
+    { id: "filter-categoria", group: "categoria", valores: [...categorias].sort((a, b) => a.localeCompare(b, "pt-BR")) },
+    { id: "filter-motor", group: "motor", valores: [...motores].sort((a, b) => a.localeCompare(b, "pt-BR")) },
+    { id: "filter-decada", group: "decada", valores: [...decadas].sort() },
+  ];
+
+  grupos.forEach(({ id, group, valores }) => {
+    const container = document.getElementById(id);
+    container.innerHTML = "";
+    valores.forEach((valor) => {
+      const label = document.createElement("label");
+      label.className = "filter-option";
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.dataset.group = group;
+      input.value = valor;
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(" " + valor));
+      container.appendChild(label);
+    });
+  });
+
+  checkboxes = Array.from(document.querySelectorAll("#filters input[type=checkbox]"));
+  checkboxes.forEach((cb) => cb.addEventListener("change", applyFilters));
+}
 
 function openFilters() {
   filtersPanel.classList.add("open");
@@ -1618,8 +1696,6 @@ filtersClear.addEventListener("click", () => {
   applyFilters();
 });
 
-checkboxes.forEach((cb) => cb.addEventListener("change", applyFilters));
-
 function getChecked(groupName) {
   return checkboxes
     .filter((cb) => cb.dataset.group === groupName && cb.checked)
@@ -1638,7 +1714,8 @@ function applyFilters() {
   let visibleCount = 0;
 
   cardEntries.forEach(({ item, element }) => {
-    const matchCategoria = categorias.length === 0 || categorias.includes(item.categoria);
+    const itemCategorias = (item.categoria || "").split("/").map((s) => s.trim());
+    const matchCategoria = categorias.length === 0 || categorias.some((c) => itemCategorias.includes(c));
     const matchMotor = motores.length === 0 || item.versions.some((v) => v.motor.some((m) => motores.includes(m)));
     const matchDecada = decadas.length === 0 || item.versions.some((v) => decadas.includes(v.decada));
     const match = matchCategoria && matchMotor && matchDecada;
