@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "grupos",
+  "info": {
+    "singularName": "grupo",
+    "pluralName": "grupos",
+    "displayName": "Grupo",
+    "description": "Grupo/conglomerado dono de marcas (ex: General Motors, Stellantis)"
+  },
+  "options": { "draftAndPublish": true },
+  "pluginOptions": {},
+  "attributes": {
+    "nome": { "type": "string", "required": true, "unique": true },
+    "slug": { "type": "uid", "targetField": "nome" },
+    "marcaDonos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::marca-dono.marca-dono",
+      "mappedBy": "grupo"
+    }
+  }
+}

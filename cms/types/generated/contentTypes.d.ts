@@ -443,6 +443,221 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiGrupoGrupo extends Struct.CollectionTypeSchema {
+  collectionName: 'grupos';
+  info: {
+    description: 'Grupo/conglomerado dono de marcas (ex: General Motors, Stellantis)';
+    displayName: 'Grupo';
+    pluralName: 'grupos';
+    singularName: 'grupo';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::grupo.grupo'> &
+      Schema.Attribute.Private;
+    marcaDonos: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::marca-dono.marca-dono'
+    >;
+    nome: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'nome'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiMarcaDonoMarcaDono extends Struct.CollectionTypeSchema {
+  collectionName: 'marca_donos';
+  info: {
+    description: 'Periodo em que um grupo foi dono de uma marca (ex: Opel foi da GM de 1929 a 2017)';
+    displayName: 'Periodo de Dono da Marca';
+    pluralName: 'marca-donos';
+    singularName: 'marca-dono';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    ate: Schema.Attribute.Integer;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    de: Schema.Attribute.Integer & Schema.Attribute.Required;
+    grupo: Schema.Attribute.Relation<'manyToOne', 'api::grupo.grupo'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::marca-dono.marca-dono'
+    > &
+      Schema.Attribute.Private;
+    marca: Schema.Attribute.Relation<'manyToOne', 'api::marca.marca'>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiMarcaMarca extends Struct.CollectionTypeSchema {
+  collectionName: 'marcas';
+  info: {
+    description: 'Marca de carros ou motos (ex: Chevrolet, Honda)';
+    displayName: 'Marca';
+    pluralName: 'marcas';
+    singularName: 'marca';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    historicoDonos: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::marca-dono.marca-dono'
+    >;
+    iniciais: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 3;
+      }>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::marca.marca'> &
+      Schema.Attribute.Private;
+    logo: Schema.Attribute.Media<'images'>;
+    modelos: Schema.Attribute.Relation<'oneToMany', 'api::modelo.modelo'>;
+    nome: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'nome'>;
+    tipo: Schema.Attribute.Enumeration<['Carros', 'Motos']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Carros'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiModeloModelo extends Struct.CollectionTypeSchema {
+  collectionName: 'modelos';
+  info: {
+    description: 'Modelo de veiculo (ex: Chevrolet Vectra, Honda CB 500)';
+    displayName: 'Modelo';
+    pluralName: 'modelos';
+    singularName: 'modelo';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    categoria: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::modelo.modelo'
+    > &
+      Schema.Attribute.Private;
+    marca: Schema.Attribute.Relation<'manyToOne', 'api::marca.marca'>;
+    nome: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    versoes: Schema.Attribute.Relation<'oneToMany', 'api::versao.versao'>;
+  };
+}
+
+export interface ApiMotorizacaoMotorizacao extends Struct.CollectionTypeSchema {
+  collectionName: 'motorizacoes';
+  info: {
+    description: 'Tags de motorizacao usadas nos filtros (ex: V6, 4 cilindros, Bicilindrico)';
+    displayName: 'Motorizacao';
+    pluralName: 'motorizacoes';
+    singularName: 'motorizacao';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::motorizacao.motorizacao'
+    > &
+      Schema.Attribute.Private;
+    nome: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    versoes: Schema.Attribute.Relation<'manyToMany', 'api::versao.versao'>;
+  };
+}
+
+export interface ApiVersaoVersao extends Struct.CollectionTypeSchema {
+  collectionName: 'versoes';
+  info: {
+    description: 'Uma geracao/versao/facelift especifica de um modelo, com ficha tecnica, historia, curiosidades e galeria';
+    displayName: 'Versao/Geracao';
+    pluralName: 'versoes';
+    singularName: 'versao';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    anoFim: Schema.Attribute.Integer;
+    anoInicio: Schema.Attribute.Integer & Schema.Attribute.Required;
+    cambio: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    curiosidades: Schema.Attribute.Text;
+    decada: Schema.Attribute.String;
+    fontes: Schema.Attribute.Text;
+    galeria: Schema.Attribute.Media<'images', true>;
+    geracao: Schema.Attribute.String & Schema.Attribute.Required;
+    historia: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::versao.versao'
+    > &
+      Schema.Attribute.Private;
+    modelo: Schema.Attribute.Relation<'manyToOne', 'api::modelo.modelo'>;
+    motorDescricao: Schema.Attribute.String;
+    motorizacoes: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::motorizacao.motorizacao'
+    >;
+    nota: Schema.Attribute.String;
+    potencia: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    tracao: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -954,6 +1169,12 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::grupo.grupo': ApiGrupoGrupo;
+      'api::marca-dono.marca-dono': ApiMarcaDonoMarcaDono;
+      'api::marca.marca': ApiMarcaMarca;
+      'api::modelo.modelo': ApiModeloModelo;
+      'api::motorizacao.motorizacao': ApiMotorizacaoMotorizacao;
+      'api::versao.versao': ApiVersaoVersao;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

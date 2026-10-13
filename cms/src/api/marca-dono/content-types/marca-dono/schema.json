@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "marca_donos",
+  "info": {
+    "singularName": "marca-dono",
+    "pluralName": "marca-donos",
+    "displayName": "Periodo de Dono da Marca",
+    "description": "Periodo em que um grupo foi dono de uma marca (ex: Opel foi da GM de 1929 a 2017)"
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": {},
+  "attributes": {
+    "marca": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::marca.marca",
+      "inversedBy": "historicoDonos"
+    },
+    "grupo": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::grupo.grupo",
+      "inversedBy": "marcaDonos"
+    },
+    "de": { "type": "integer", "required": true },
+    "ate": { "type": "integer" }
+  }
+}

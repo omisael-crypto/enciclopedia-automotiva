@@ -1,0 +1,49 @@
+{
+  "kind": "collectionType",
+  "collectionName": "versoes",
+  "info": {
+    "singularName": "versao",
+    "pluralName": "versoes",
+    "displayName": "Versao/Geracao",
+    "description": "Uma geracao/versao/facelift especifica de um modelo, com ficha tecnica, historia, curiosidades e galeria"
+  },
+  "options": { "draftAndPublish": true },
+  "pluginOptions": {},
+  "attributes": {
+    "geracao": { "type": "string", "required": true },
+    "nota": { "type": "string" },
+    "anoInicio": { "type": "integer", "required": true },
+    "anoFim": { "type": "integer" },
+    "decada": { "type": "string" },
+    "motorDescricao": { "type": "string" },
+    "potencia": { "type": "string" },
+    "cambio": { "type": "string" },
+    "tracao": { "type": "string" },
+    "historia": { "type": "text" },
+    "curiosidades": {
+      "type": "text",
+      "description": "Uma curiosidade por linha"
+    },
+    "fontes": {
+      "type": "text",
+      "description": "Uma fonte por linha, formato: descricao | url"
+    },
+    "galeria": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": ["images"]
+    },
+    "modelo": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::modelo.modelo",
+      "inversedBy": "versoes"
+    },
+    "motorizacoes": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::motorizacao.motorizacao",
+      "inversedBy": "versoes"
+    }
+  }
+}

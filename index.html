@@ -946,10 +946,16 @@
 <footer-note>Protótipo visual — dados de exemplo, sem fichas técnicas reais ainda.</footer-note>
 
 <script>
+// Endereço do backend Strapi. Só responde quando o Strapi está rodando na
+// mesma máquina de quem está vendo a página (ex: o próprio Misael testando
+// localmente) — em qualquer outro computador, o fetch falha e o site cai
+// automaticamente nos dados de exemplo abaixo, pra nunca ficar em branco.
+const API_URL = "http://localhost:1337";
+
 // Cada marca tem uma lista de "models". Cada model tem "versions" com todas
 // as gerações/facelifts em ordem cronológica — é por isso que a seta percorre
 // a história inteira do carro dentro de um único card.
-const brands = [
+const exampleBrands = [
   {
     slug: "chevrolet",
     name: "Chevrolet",
@@ -1041,6 +1047,45 @@ const brands = [
     models: []
   }
 ];
+
+let brands = exampleBrands;
+
+function transformMarca(m) {
+  return {
+    slug: m.slug,
+    name: m.nome,
+    tipo: m.tipo,
+    initials: m.iniciais,
+    donos: (m.historicoDonos || []).map((d) => ({
+      grupo: d.grupo ? d.grupo.nome : "—",
+      de: d.de,
+      ate: d.ate,
+    })),
+    models: (m.modelos || []).map((mod) => ({
+      model: mod.nome,
+      categoria: mod.categoria,
+      versions: (mod.versoes || []).map((v) => ({
+        gen: v.geracao,
+        years: v.anoInicio + "–" + (v.anoFim || "presente"),
+        note: v.nota || undefined,
+        motor: (v.motorizacoes || []).map((mo) => mo.nome),
+        decada: v.decada,
+      })),
+    })),
+  };
+}
+
+async function loadBrandsFromStrapi() {
+  const query =
+    "populate[historicoDonos][populate]=grupo" +
+    "&populate[modelos][populate][versoes][populate]=motorizacoes" +
+    "&pagination[pageSize]=100";
+  const res = await fetch(`${API_URL}/api/marcas?${query}`);
+  if (!res.ok) throw new Error("Strapi respondeu com erro " + res.status);
+  const json = await res.json();
+  if (!json.data || json.data.length === 0) throw new Error("Strapi sem marcas cadastradas");
+  brands = json.data.map(transformMarca);
+}
 
 function versionLabel(v) {
   return v.gen + " · " + v.years + (v.note ? " · " + v.note : "");
@@ -1473,7 +1518,12 @@ backBtn.addEventListener("click", () => {
 
 backHomeBtn.addEventListener("click", () => navigate(showHome, homeTitle));
 
-showHome();
+loadBrandsFromStrapi()
+  .catch((err) => {
+    console.warn("Não foi possível carregar do Strapi, usando dados de exemplo:", err.message);
+    brands = exampleBrands;
+  })
+  .finally(showHome);
 </script>
 
 </body>

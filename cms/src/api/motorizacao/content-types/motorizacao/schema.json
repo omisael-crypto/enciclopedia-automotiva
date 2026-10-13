@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "motorizacoes",
+  "info": {
+    "singularName": "motorizacao",
+    "pluralName": "motorizacoes",
+    "displayName": "Motorizacao",
+    "description": "Tags de motorizacao usadas nos filtros (ex: V6, 4 cilindros, Bicilindrico)"
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": {},
+  "attributes": {
+    "nome": { "type": "string", "required": true, "unique": true },
+    "versoes": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::versao.versao",
+      "mappedBy": "motorizacoes"
+    }
+  }
+}

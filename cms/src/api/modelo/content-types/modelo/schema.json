@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "modelos",
+  "info": {
+    "singularName": "modelo",
+    "pluralName": "modelos",
+    "displayName": "Modelo",
+    "description": "Modelo de veiculo (ex: Chevrolet Vectra, Honda CB 500)"
+  },
+  "options": { "draftAndPublish": true },
+  "pluginOptions": {},
+  "attributes": {
+    "nome": { "type": "string", "required": true },
+    "categoria": { "type": "string" },
+    "marca": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::marca.marca",
+      "inversedBy": "modelos"
+    },
+    "versoes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::versao.versao",
+      "mappedBy": "modelo"
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "marcas",
+  "info": {
+    "singularName": "marca",
+    "pluralName": "marcas",
+    "displayName": "Marca",
+    "description": "Marca de carros ou motos (ex: Chevrolet, Honda)"
+  },
+  "options": { "draftAndPublish": true },
+  "pluginOptions": {},
+  "attributes": {
+    "nome": { "type": "string", "required": true },
+    "slug": { "type": "uid", "targetField": "nome" },
+    "tipo": {
+      "type": "enumeration",
+      "enum": ["Carros", "Motos"],
+      "default": "Carros",
+      "required": true
+    },
+    "iniciais": { "type": "string", "maxLength": 3 },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "modelos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::modelo.modelo",
+      "mappedBy": "marca"
+    },
+    "historicoDonos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::marca-dono.marca-dono",
+      "mappedBy": "marca"
+    }
+  }
+}
