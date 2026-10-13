@@ -1,0 +1,10 @@
+cms/node_modules/
+cms/.tmp/
+cms/.cache/
+cms/dist/
+cms/build/
+cms/.swc-cache-secure/
+cms/*.log
+cms/.env
+cms/.strapi-updater.json
+cms/.node22/
