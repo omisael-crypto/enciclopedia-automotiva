@@ -13,6 +13,10 @@
     --muted: #9aa0ab;
     --accent: #e0a900;
     --border: #2a2e37;
+    --green: #4caf6a;
+    --gray: #6b7280;
+    --orange: #e08a3c;
+    --blue: #4c8ee0;
   }
 
   * { box-sizing: border-box; }
@@ -20,7 +24,9 @@
   body {
     margin: 0;
     font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    background: var(--bg);
+    background:
+      radial-gradient(900px 500px at 15% -10%, color-mix(in oklch, var(--accent) 10%, transparent), transparent 60%),
+      var(--bg);
     color: var(--text);
   }
 
@@ -37,31 +43,134 @@
   /* ---- Home: lista de marcas ---- */
   #home {
     display: none;
-    padding: 24px 16px 40px;
   }
 
   #home.open { display: block; }
 
   .home-inner {
-    max-width: 1200px;
+    max-width: 1300px;
     margin: 0 auto;
+    padding: 0 16px 60px;
+  }
+
+  /* ---- Hero: bloco grande de abertura, estilo site de marca grande ---- */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    text-align: center;
+    padding: 64px 20px 48px;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: -25%;
+    z-index: -1;
+    background:
+      radial-gradient(38% 38% at 18% 25%, color-mix(in oklch, var(--accent) 38%, transparent), transparent 70%),
+      radial-gradient(34% 34% at 82% 20%, color-mix(in oklch, var(--blue) 32%, transparent), transparent 70%),
+      radial-gradient(42% 42% at 50% 95%, color-mix(in oklch, var(--green) 22%, transparent), transparent 70%);
+    filter: blur(50px);
+    animation: heroDrift 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes heroDrift {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(-4%, 5%) scale(1.1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-bg { animation: none; }
+  }
+
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: color-mix(in oklch, var(--accent) 16%, transparent);
+    border: 1px solid color-mix(in oklch, var(--accent) 35%, transparent);
+    border-radius: 999px;
+    padding: 5px 14px;
+    margin-bottom: 20px;
   }
 
   .home-title {
-    font-size: 24px;
-    margin: 0 0 4px;
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin: 0 0 16px;
+  }
+
+  .home-title .accent-word {
+    background: linear-gradient(135deg, var(--accent), #ffd466);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   .home-subtitle {
-    font-size: 13px;
+    font-size: 16px;
     color: var(--muted);
-    margin: 0 0 20px;
+    margin: 0 auto 28px;
+    min-height: 22px;
+    max-width: 480px;
+  }
+
+  .home-search {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto 28px;
+    display: block;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 20px;
+    color: var(--text);
+    font-size: 15px;
+    box-shadow: 0 12px 30px -14px rgba(0,0,0,0.6);
+  }
+
+  .home-search:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .home-stats {
+    display: flex;
+    justify-content: center;
+    gap: 36px;
+    flex-wrap: wrap;
+  }
+
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-stat .num {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-stat .label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
   }
 
   .home-tabs {
     display: flex;
+    justify-content: center;
     gap: 8px;
-    margin-bottom: 14px;
+    margin: 40px 0 20px;
   }
 
   .home-tabs button {
@@ -69,15 +178,15 @@
     border: 1px solid var(--border);
     color: var(--muted);
     border-radius: 999px;
-    padding: 7px 16px;
-    font-size: 13px;
+    padding: 9px 20px;
+    font-size: 13.5px;
+    font-weight: 600;
     cursor: pointer;
   }
 
   .home-tabs button.active {
     background: var(--accent);
     color: #1a1d24;
-    font-weight: 600;
     border-color: var(--accent);
   }
 
@@ -105,10 +214,11 @@
   }
 
   .brand-card {
-    background: var(--card-bg);
+    position: relative;
+    background: linear-gradient(165deg, var(--card-bg), #15171c);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px 14px;
+    border-radius: 18px;
+    padding: 24px 16px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -117,8 +227,18 @@
     cursor: pointer;
     box-shadow:
       0 1px 2px rgba(0,0,0,0.3),
-      0 8px 20px -10px rgba(0,0,0,0.5);
-    transition: transform 0.25s cubic-bezier(.2,.8,.2,1), box-shadow 0.25s ease, border-color 0.25s ease;
+      0 10px 24px -12px rgba(0,0,0,0.55);
+    transition: transform 0.3s cubic-bezier(.2,.8,.2,1), box-shadow 0.3s ease, border-color 0.3s ease;
+    animation: cardIn 0.4s cubic-bezier(.2,.8,.2,1) backwards;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .brand-card.hidden {
+    display: none;
   }
 
   .brand-card.disabled {
@@ -126,27 +246,56 @@
   }
 
   .brand-card .badge {
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
-    background: var(--accent);
-    color: #1a1d24;
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    font-size: 16px;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    box-shadow: 0 10px 20px -8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+    margin-bottom: 4px;
+  }
+
+  .brand-card.disabled .badge {
+    filter: grayscale(0.6) brightness(0.75);
   }
 
   .brand-card .name {
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 16.5px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .brand-card .origem {
+    font-size: 11.5px;
+    color: var(--muted);
   }
 
   .brand-card .meta {
     font-size: 12px;
     color: var(--muted);
   }
+
+  .status-pill {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 2px 7px;
+    border-radius: 999px;
+  }
+
+  .status-pill.ativa { background: color-mix(in oklch, var(--green) 25%, transparent); color: var(--green); }
+  .status-pill.extinta { background: color-mix(in oklch, var(--gray) 30%, transparent); color: #c7cad1; }
+  .status-pill.vendida { background: color-mix(in oklch, var(--orange) 25%, transparent); color: var(--orange); }
+  .status-pill.rebatizada { background: color-mix(in oklch, var(--blue) 25%, transparent); color: var(--blue); }
 
   /* ---- Cabeçalho da página de marca ---- */
   header {
@@ -731,14 +880,18 @@
   /* A partir daqui, ajustes só entram em ação em telas largas (computador) */
   @media (min-width: 700px) {
     .home-inner, .brand-row, .layout {
-      max-width: 1200px;
+      max-width: 1300px;
       margin-left: auto;
       margin-right: auto;
     }
 
-    #home { padding: 40px 32px 60px; }
-    .home-title { font-size: 30px; }
-    .brand-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .home-inner { padding: 0 32px 80px; }
+    .hero { padding: 110px 32px 70px; }
+    .hero-eyebrow { font-size: 12.5px; }
+    .home-title { font-size: 64px; }
+    .home-subtitle { font-size: 18px; max-width: 580px; }
+    .hero-stat .num { font-size: 40px; }
+    .brand-grid { grid-template-columns: repeat(4, 1fr); gap: 18px; }
 
     header { padding: 18px 32px 14px; }
     main { padding: 24px 32px; }
@@ -814,9 +967,15 @@
 <body>
 
 <section id="home">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <span class="hero-eyebrow">Catálogo global</span>
+    <h1 class="home-title" id="home-title" tabindex="-1">Carros e motos.<br>Todas as <span class="accent-word">eras</span>.</h1>
+    <p class="home-subtitle" id="home-subtitle">Carregando catálogo…</p>
+    <input class="home-search" id="home-search" placeholder="Buscar marca, grupo ou país...">
+    <div class="home-stats" id="home-stats"></div>
+  </div>
   <div class="home-inner">
-    <h1 class="home-title" id="home-title" tabindex="-1">Enciclopédia Automotiva</h1>
-    <p class="home-subtitle">Escolha uma marca de carros ou motos</p>
     <div class="home-tabs">
       <button id="tab-marcas" class="active">Marcas</button>
       <button id="tab-grupos">Grupos</button>
@@ -1058,6 +1217,9 @@ function transformMarca(m) {
     name: m.nome,
     tipo: m.tipo,
     initials: m.iniciais,
+    paisOrigem: m.paisOrigem,
+    categoriaPrincipal: m.categoriaPrincipal,
+    situacao: m.situacao,
     donos: (m.historicoDonos || []).map((d) => ({
       grupo: d.grupo ? d.grupo.nome : "—",
       de: d.de,
@@ -1116,6 +1278,45 @@ function countModels(brand) {
   return brand.models.length;
 }
 
+const BANDEIRAS = {
+  "Estados Unidos": "🇺🇸", "Alemanha": "🇩🇪", "Reino Unido": "🇬🇧", "Suécia": "🇸🇪",
+  "Austrália": "🇦🇺", "Itália": "🇮🇹", "França": "🇫🇷", "Japão": "🇯🇵",
+  "Coreia do Sul": "🇰🇷", "China": "🇨🇳", "Espanha": "🇪🇸", "República Tcheca": "🇨🇿",
+  "Romênia": "🇷🇴", "Rússia": "🇷🇺", "Malásia": "🇲🇾",
+};
+
+const PALETA_MARCAS = [
+  ["#e63946", "#9d0208"],
+  ["#023e8a", "#0077b6"],
+  ["#2b2d42", "#6c757d"],
+  ["#1b4332", "#40916c"],
+  ["#e0a900", "#c98f00"],
+  ["#ff6d00", "#c1121f"],
+  ["#7209b7", "#3a0ca3"],
+  ["#495057", "#212529"],
+  ["#0096c7", "#023047"],
+];
+
+function corMarca(nome) {
+  let hash = 0;
+  for (let i = 0; i < nome.length; i++) hash = (hash * 31 + nome.charCodeAt(i)) >>> 0;
+  const [a, b] = PALETA_MARCAS[hash % PALETA_MARCAS.length];
+  return `linear-gradient(135deg, ${a}, ${b})`;
+}
+
+function statusClasse(situacao) {
+  const s = (situacao || "").toLowerCase();
+  if (s === "ativa" || s === "ativo") return "ativa";
+  if (s === "extinta") return "extinta";
+  if (s === "vendida") return "vendida";
+  if (s === "rebatizada") return "rebatizada";
+  return null;
+}
+
+function normalizar(s) {
+  return (s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+}
+
 // O dono "atual" é o período da lista que ainda não tem data de fim (ate: null).
 function grupoAtual(brand) {
   const atual = brand.donos.find((d) => d.ate === null);
@@ -1129,31 +1330,52 @@ const tabGrupos = document.getElementById("tab-grupos");
 const homeBack = document.getElementById("home-back");
 const homeTitle = document.getElementById("home-title");
 
-function createBrandCard(brand) {
+function createBrandCard(brand, delayMs) {
   const card = document.createElement("div");
   card.className = "brand-card" + (brand.models.length === 0 ? " disabled" : "");
+  card.style.animationDelay = (delayMs || 0) + "ms";
+
+  const grupoNome = grupoAtual(brand);
+  card.dataset.search = normalizar([brand.name, grupoNome, brand.paisOrigem, brand.categoriaPrincipal].filter(Boolean).join(" "));
+
+  const classeStatus = statusClasse(brand.situacao);
+  if (classeStatus) {
+    const pill = document.createElement("div");
+    pill.className = "status-pill " + classeStatus;
+    pill.textContent = brand.situacao;
+    card.appendChild(pill);
+  }
 
   const badge = document.createElement("div");
   badge.className = "badge";
+  badge.style.background = corMarca(brand.name);
   badge.textContent = brand.initials;
 
   const name = document.createElement("div");
   name.className = "name";
   name.textContent = brand.name;
 
+  card.appendChild(badge);
+  card.appendChild(name);
+
+  if (brand.paisOrigem) {
+    const origem = document.createElement("div");
+    origem.className = "origem";
+    const bandeira = BANDEIRAS[brand.paisOrigem];
+    origem.textContent = (bandeira ? bandeira + " " : "") + brand.paisOrigem;
+    card.appendChild(origem);
+  }
+
   const meta = document.createElement("div");
   meta.className = "meta";
   meta.textContent = brand.models.length === 0
     ? "Em breve"
     : `${brand.tipo} · ${countModels(brand)} modelo${countModels(brand) > 1 ? "s" : ""}`;
+  card.appendChild(meta);
 
   const grupoTag = document.createElement("div");
   grupoTag.className = "grupo-tag";
-  grupoTag.textContent = grupoAtual(brand);
-
-  card.appendChild(badge);
-  card.appendChild(name);
-  card.appendChild(meta);
+  grupoTag.textContent = grupoNome;
   card.appendChild(grupoTag);
 
   card.addEventListener("click", () => navigate(() => showBrand(brand), brandName));
@@ -1195,7 +1417,8 @@ function renderBrandsView() {
   tabGrupos.classList.remove("active");
   homeBack.style.display = "none";
   brandGrid.innerHTML = "";
-  brands.forEach((brand) => brandGrid.appendChild(createBrandCard(brand)));
+  brands.forEach((brand, i) => brandGrid.appendChild(createBrandCard(brand, i * 12)));
+  applyHomeSearch();
 }
 
 function renderGroupsView() {
@@ -1205,13 +1428,16 @@ function renderGroupsView() {
   brandGrid.innerHTML = "";
 
   const groupNames = [...new Set(brands.map((b) => grupoAtual(b)))];
-  groupNames.forEach((groupName) => {
+  groupNames.forEach((groupName, i) => {
     const groupBrands = brands.filter((b) => grupoAtual(b) === groupName);
     const card = document.createElement("div");
     card.className = "brand-card";
+    card.style.animationDelay = (i * 12) + "ms";
+    card.dataset.search = normalizar(groupName);
 
     const badge = document.createElement("div");
     badge.className = "badge";
+    badge.style.background = corMarca(groupName);
     badge.textContent = groupName.slice(0, 2).toUpperCase();
 
     const name = document.createElement("div");
@@ -1229,6 +1455,7 @@ function renderGroupsView() {
 
     brandGrid.appendChild(card);
   });
+  applyHomeSearch();
 }
 
 function renderGroupDetail(groupName) {
@@ -1240,12 +1467,26 @@ function renderGroupDetail(groupName) {
 
   brands
     .filter((b) => grupoAtual(b) === groupName)
-    .forEach((brand) => brandGrid.appendChild(createBrandCard(brand)));
+    .forEach((brand, i) => brandGrid.appendChild(createBrandCard(brand, i * 12)));
+  applyHomeSearch();
 }
 
-tabMarcas.addEventListener("click", () => navigate(renderBrandsView, homeTitle));
-tabGrupos.addEventListener("click", () => navigate(renderGroupsView, homeTitle));
-homeBack.addEventListener("click", () => navigate(renderGroupsView, homeTitle));
+tabMarcas.addEventListener("click", () => navigate(() => { homeSearch.value = ""; renderBrandsView(); }, homeTitle));
+tabGrupos.addEventListener("click", () => navigate(() => { homeSearch.value = ""; renderGroupsView(); }, homeTitle));
+homeBack.addEventListener("click", () => navigate(() => { homeSearch.value = ""; renderGroupsView(); }, homeTitle));
+
+const homeSearch = document.getElementById("home-search");
+function applyHomeSearch() {
+  const termo = normalizar(homeSearch.value.trim());
+  const cards = Array.from(brandGrid.children);
+  let visiveis = 0;
+  cards.forEach((card) => {
+    const match = !termo || (card.dataset.search || "").includes(termo);
+    card.classList.toggle("hidden", !match);
+    if (match) visiveis++;
+  });
+}
+homeSearch.addEventListener("input", applyHomeSearch);
 
 // ---- Elementos principais ----
 const homeEl = document.getElementById("home");
@@ -1269,6 +1510,20 @@ function showHome() {
   headerEl.classList.remove("open");
   layoutEl.classList.remove("open");
   detailEl.classList.remove("open");
+
+  document.getElementById("home-subtitle").textContent =
+    "Da fundação das marcas às gerações mais recentes — pesquisado e revisado antes de publicar.";
+  const totalGrupos = new Set(brands.flatMap((b) => b.donos.map((d) => d.grupo))).size;
+  const totalModelos = brands.reduce((acc, b) => acc + b.models.length, 0);
+  const stats = [
+    { num: brands.length, label: "Marcas" },
+    { num: totalGrupos, label: "Grupos" },
+  ];
+  if (totalModelos > 0) stats.push({ num: totalModelos, label: "Modelos" });
+  document.getElementById("home-stats").innerHTML = stats
+    .map((s) => `<div class="hero-stat"><div class="num">${s.num}</div><div class="label">${s.label}</div></div>`)
+    .join("");
+
   renderBrandsView();
 }
 
