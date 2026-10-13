@@ -278,6 +278,18 @@
 
   header.open { display: block; }
 
+  .back-link {
+    display: inline-block;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 0 0 10px;
+    cursor: pointer;
+  }
+
+  .back-link:hover { color: var(--text); }
+
   .brand-row {
     display: flex;
     align-items: center;
@@ -981,6 +993,7 @@
 </section>
 
 <header id="header">
+  <button class="back-link" id="header-back">‹ Voltar</button>
   <div class="brand-row" id="brand-row">
     <div class="brand-logo" id="brand-logo">CH</div>
     <div>
@@ -1335,7 +1348,7 @@ function createBrandCard(brand, delayMs) {
   grupoTag.textContent = grupoNome;
   card.appendChild(grupoTag);
 
-  card.addEventListener("click", () => navigate(() => showBrand(brand), brandName));
+  card.addEventListener("click", () => goTo({ v: "marca", slug: brand.slug }, brandName));
 
   return card;
 }
@@ -1407,7 +1420,7 @@ function renderGroupsView() {
     card.appendChild(badge);
     card.appendChild(name);
     card.appendChild(meta);
-    card.addEventListener("click", () => navigate(() => renderGroupDetail(groupName), homeTitle));
+    card.addEventListener("click", () => goTo({ v: "grupoDetalhe", grupo: groupName }, homeTitle));
 
     brandGrid.appendChild(card);
   });
@@ -1427,9 +1440,9 @@ function renderGroupDetail(groupName) {
   applyHomeSearch();
 }
 
-tabMarcas.addEventListener("click", () => navigate(() => { homeSearch.value = ""; renderBrandsView(); }, homeTitle));
-tabGrupos.addEventListener("click", () => navigate(() => { homeSearch.value = ""; renderGroupsView(); }, homeTitle));
-homeBack.addEventListener("click", () => navigate(() => { homeSearch.value = ""; renderGroupsView(); }, homeTitle));
+tabMarcas.addEventListener("click", () => goTo({ v: "home" }, homeTitle));
+tabGrupos.addEventListener("click", () => goTo({ v: "grupos" }, homeTitle));
+homeBack.addEventListener("click", () => { history.back(); });
 
 const homeSearch = document.getElementById("home-search");
 function applyHomeSearch() {
@@ -1468,12 +1481,16 @@ function corDaMarca(nome) {
   return PALETA_MARCAS[hash % PALETA_MARCAS.length];
 }
 
-function showHome() {
+function openHomeScreen() {
   homeEl.classList.add("open");
   headerEl.classList.remove("open");
   layoutEl.classList.remove("open");
   detailEl.classList.remove("open");
   document.documentElement.style.removeProperty("--marca-cor");
+}
+
+function showHome() {
+  openHomeScreen();
 
   document.getElementById("home-subtitle").textContent =
     "Da fundação das marcas às gerações mais recentes — pesquisado e revisado antes de publicar.";
@@ -1490,6 +1507,54 @@ function showHome() {
 
   renderBrandsView();
 }
+
+// ---- Navegação com histórico real do navegador ----
+// Cada troca de tela empurra um estado pro histórico, pra o botão de voltar
+// do celular/navegador funcionar corretamente em vez de sair do site.
+function applyState(state) {
+  switch (state.v) {
+    case "grupos":
+      homeSearch.value = "";
+      openHomeScreen();
+      renderGroupsView();
+      return homeTitle;
+    case "grupoDetalhe":
+      openHomeScreen();
+      renderGroupDetail(state.grupo);
+      return homeTitle;
+    case "marca": {
+      const b = brands.find((x) => x.slug === state.slug);
+      if (!b) { showHome(); return homeTitle; }
+      showBrand(b);
+      return brandName;
+    }
+    case "detalhe": {
+      const b = brands.find((x) => x.slug === state.slug);
+      if (!b) { showHome(); return homeTitle; }
+      currentBrand = b;
+      const item = b.models[state.modelIndex];
+      if (!item) { showBrand(b); return brandName; }
+      document.documentElement.style.setProperty("--marca-cor", corDaMarca(b.name));
+      showDetail(item, state.versionIndex || 0);
+      return detailTitle;
+    }
+    case "home":
+    default:
+      homeSearch.value = "";
+      showHome();
+      return homeTitle;
+  }
+}
+
+function goTo(state, focusEl) {
+  history.pushState(state, "");
+  navigate(() => applyState(state), focusEl);
+}
+
+window.addEventListener("popstate", (e) => {
+  const state = e.state || { v: "home" };
+  navigate(() => applyState(state), null);
+});
 
 function showBrand(brand) {
   currentBrand = brand;
@@ -1509,7 +1574,8 @@ function showBrand(brand) {
   window.scrollTo(0, 0);
 }
 
-brandRow.addEventListener("click", () => navigate(showHome, homeTitle));
+brandRow.addEventListener("click", () => { history.back(); });
+document.getElementById("header-back").addEventListener("click", () => { history.back(); });
 
 btnGrid.addEventListener("click", () => {
   grid.classList.remove("list");
@@ -1527,7 +1593,7 @@ function buildGrid(models) {
   grid.innerHTML = "";
   cardEntries = [];
 
-  models.forEach((item) => {
+  models.forEach((item, modelIndex) => {
     let current = 0;
 
     const card = document.createElement("div");
@@ -1621,7 +1687,7 @@ function buildGrid(models) {
     card.appendChild(info);
     grid.appendChild(card);
 
-    card.addEventListener("click", () => navigate(() => showDetail(item, current), detailTitle));
+    card.addEventListener("click", () => goTo({ v: "detalhe", slug: currentBrand.slug, modelIndex, versionIndex: current }, detailTitle));
 
     cardEntries.push({ item, element: card });
   });
@@ -1769,7 +1835,7 @@ function showDetail(item, versionIndex) {
     const chip = document.createElement("button");
     chip.className = "timeline-chip" + (i === versionIndex ? " active" : "");
     chip.textContent = version.gen + (version.note ? ` (${version.note})` : "");
-    chip.addEventListener("click", () => navigate(() => showDetail(item, i), detailTitle));
+    chip.addEventListener("click", () => goTo({ v: "detalhe", slug: currentBrand.slug, modelIndex: currentBrand.models.indexOf(item), versionIndex: i }, detailTitle));
     detailTimeline.appendChild(chip);
   });
 
@@ -1778,21 +1844,19 @@ function showDetail(item, versionIndex) {
   window.scrollTo(0, 0);
 }
 
-backBtn.addEventListener("click", () => {
-  navigate(() => {
-    detailEl.classList.remove("open");
-    layoutEl.classList.add("open");
-  }, brandName);
-});
+backBtn.addEventListener("click", () => { history.back(); });
 
-backHomeBtn.addEventListener("click", () => navigate(showHome, homeTitle));
+backHomeBtn.addEventListener("click", () => goTo({ v: "home" }, homeTitle));
 
 loadBrandsFromStrapi()
   .catch((err) => {
     console.warn("Não foi possível carregar do Strapi, usando dados de exemplo:", err.message);
     brands = exampleBrands;
   })
-  .finally(showHome);
+  .finally(() => {
+    history.replaceState({ v: "home" }, "");
+    showHome();
+  });
 </script>
 
 </body>
