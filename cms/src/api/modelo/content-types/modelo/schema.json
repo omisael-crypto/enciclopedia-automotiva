@@ -11,6 +11,11 @@
   "pluginOptions": {},
   "attributes": {
     "nome": { "type": "string", "required": true },
+    "tipoVeiculo": {
+      "type": "enumeration",
+      "enum": ["Carro", "Moto", "Caminhão"],
+      "description": "Classificação primária usada na navegação por abas dentro da marca"
+    },
     "categoria": { "type": "string" },
     "regiaoOrigem": { "type": "string" },
     "statusProducao": { "type": "string" },

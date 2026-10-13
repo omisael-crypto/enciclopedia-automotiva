@@ -360,6 +360,29 @@
 
   .owner-label.current { color: var(--marca-cor, var(--accent)); font-weight: 600; }
 
+  .tipo-tabs {
+    display: flex;
+    gap: 6px;
+    margin-top: 14px;
+  }
+
+  .tipo-tab {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .tipo-tab.active {
+    background: var(--marca-cor, var(--accent));
+    border-color: var(--marca-cor, var(--accent));
+    color: #1a1d24;
+    font-weight: 600;
+  }
+
   .controls {
     display: flex;
     justify-content: space-between;
@@ -479,6 +502,7 @@
 
   .photo-wrap {
     position: relative;
+    overflow: hidden;
     aspect-ratio: 4 / 3;
     background:
       radial-gradient(120% 140% at 20% 15%, color-mix(in oklch, var(--marca-cor, var(--accent)) 20%, transparent), transparent 55%),
@@ -489,6 +513,30 @@
     color: var(--muted);
     font-size: 12px;
     flex-shrink: 0;
+  }
+
+  .photo-wrap img,
+  .detail-hero img,
+  .gallery-item img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .photo-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(185deg, rgba(20,22,28,0.1) 0%, rgba(20,22,28,0.78) 100%);
+  }
+
+  .photo-label {
+    position: relative;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.65);
+    padding: 0 10px;
+    text-align: center;
   }
 
   #grid.list .photo-wrap {
@@ -763,6 +811,8 @@
   }
 
   .detail-hero {
+    position: relative;
+    overflow: hidden;
     aspect-ratio: 16 / 9;
     background:
       radial-gradient(130% 160% at 15% 10%, color-mix(in oklch, var(--accent) 20%, transparent), transparent 55%),
@@ -869,6 +919,8 @@
   }
 
   .gallery-item {
+    position: relative;
+    overflow: hidden;
     aspect-ratio: 1;
     background: var(--card-bg);
     border: 1px solid var(--border);
@@ -1006,6 +1058,7 @@
     <div class="owner-bar" id="owner-bar"></div>
     <div class="owner-labels" id="owner-labels"></div>
   </div>
+  <div class="tipo-tabs" id="tipo-tabs"></div>
   <div class="controls">
     <input class="search" placeholder="Buscar modelo..." disabled>
     <button id="filters-btn" class="filters-btn">Filtros <span class="badge2" id="filters-badge">0</span></button>
@@ -1125,6 +1178,7 @@ const exampleBrands = [
       {
         model: "Vectra",
         categoria: "Sedã",
+        tipoVeiculo: "Carro",
         versions: [
           { gen: "A", years: "1993–1996", motor: ["4 cilindros"], decada: "1990s" },
           { gen: "B", years: "1997–2005", motor: ["4 cilindros", "V6"], decada: "2000s" },
@@ -1135,6 +1189,7 @@ const exampleBrands = [
       {
         model: "Opala",
         categoria: "Sedã",
+        tipoVeiculo: "Carro",
         versions: [
           { gen: "1ª geração", years: "1968–1972", motor: ["4 cilindros", "V6", "V8"], decada: "1960s" },
           { gen: "1ª geração", years: "1973–1978", motor: ["4 cilindros", "V6", "V8"], decada: "1970s" },
@@ -1145,6 +1200,7 @@ const exampleBrands = [
       {
         model: "Celta",
         categoria: "Hatch",
+        tipoVeiculo: "Carro",
         versions: [
           { gen: "Geração única", years: "2000–2006", motor: ["4 cilindros"], decada: "2000s" },
           { gen: "Geração única", years: "2007–2016", note: "Facelift", motor: ["4 cilindros"], decada: "2010s" }
@@ -1173,6 +1229,7 @@ const exampleBrands = [
       {
         model: "Uno",
         categoria: "Hatch",
+        tipoVeiculo: "Carro",
         versions: [
           { gen: "Uno antigo", years: "1984–2013", motor: ["4 cilindros"], decada: "1980s" },
           { gen: "Novo Uno", years: "2010–2021", motor: ["4 cilindros"], decada: "2010s" }
@@ -1190,6 +1247,7 @@ const exampleBrands = [
       {
         model: "CB 500",
         categoria: "Moto",
+        tipoVeiculo: "Moto",
         versions: [
           { gen: "1ª geração", years: "1993–2003", motor: ["Bicilíndrico"], decada: "1990s" },
           { gen: "CB 500F", years: "2013–2024", note: "Geração atual", motor: ["Bicilíndrico"], decada: "2010s" }
@@ -1226,6 +1284,7 @@ function transformMarca(m) {
     models: (m.modelos || []).map((mod) => ({
       model: mod.nome,
       categoria: mod.categoria,
+      tipoVeiculo: mod.tipoVeiculo || "Carro",
       versions: (mod.versoes || []).map((v) => ({
         gen: v.geracao,
         years: v.anoInicio + "–" + (v.anoFim || "presente"),
@@ -1256,6 +1315,13 @@ function versionLabel(v) {
 function slugify(s) {
   const semAcento = s.normalize("NFD").split("").filter((ch) => ch.charCodeAt(0) < 0x0300 || ch.charCodeAt(0) > 0x036f).join("");
   return semAcento.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+// Imagens de placeholder (Lorem Picsum, gratuito, sem chave de API) só pra
+// não ver a grade vazia enquanto não temos fotos reais dos carros. O "seed"
+// fixa sempre a mesma foto pro mesmo carro, pra não ficar trocando a cada load.
+function placeholderImgUrl(seed, w, h) {
+  return `https://picsum.photos/seed/${encodeURIComponent(seed)}/${w}/${h}`;
 }
 
 // Troca de tela com efeito suave (morph). Em navegadores sem suporte, só troca na hora.
@@ -1465,6 +1531,7 @@ const detailEl = document.getElementById("detail");
 const brandRow = document.getElementById("brand-row");
 const brandLogo = document.getElementById("brand-logo");
 const brandName = document.getElementById("brand-name");
+const tipoTabs = document.getElementById("tipo-tabs");
 const grid = document.getElementById("grid");
 const btnGrid = document.getElementById("btn-grid");
 const btnList = document.getElementById("btn-list");
@@ -1472,6 +1539,7 @@ const resultsBar = document.getElementById("results-bar");
 const noResults = document.getElementById("no-results");
 
 let currentBrand = null;
+let currentTipoVeiculo = null;
 let cardEntries = [];
 
 const PALETA_MARCAS = ["#e63946", "#0077b6", "#40916c", "#e0a900", "#c1121f", "#7209b7", "#0096c7", "#f3722c", "#43aa8b"];
@@ -1525,7 +1593,7 @@ function applyState(state) {
     case "marca": {
       const b = brands.find((x) => x.slug === state.slug);
       if (!b) { showHome(); return homeTitle; }
-      showBrand(b);
+      showBrand(b, state.tipo);
       return brandName;
     }
     case "detalhe": {
@@ -1556,15 +1624,29 @@ window.addEventListener("popstate", (e) => {
   navigate(() => applyState(state), null);
 });
 
-function showBrand(brand) {
+const TIPO_VEICULO_ORDEM = ["Carro", "Moto", "Caminhão"];
+const TIPO_VEICULO_LABEL = { Carro: "Carros", Moto: "Motos", Caminhão: "Caminhões" };
+
+function showBrand(brand, tipoSolicitado) {
   currentBrand = brand;
   brandLogo.textContent = brand.initials;
   brandName.textContent = brand.name;
   document.documentElement.style.setProperty("--marca-cor", corDaMarca(brand.name));
   renderOwnerTimeline(brand);
 
-  renderFilterOptions(brand.models);
-  buildGrid(brand.models);
+  const tiposDisponiveis = TIPO_VEICULO_ORDEM.filter((t) =>
+    brand.models.some((m) => (m.tipoVeiculo || "Carro") === t)
+  );
+  const tipoAtivo = tiposDisponiveis.includes(tipoSolicitado) ? tipoSolicitado : tiposDisponiveis[0];
+  currentTipoVeiculo = tipoAtivo;
+  renderTipoTabs(tiposDisponiveis, tipoAtivo);
+
+  const modelosDoTipo = tiposDisponiveis.length <= 1
+    ? brand.models
+    : brand.models.filter((m) => (m.tipoVeiculo || "Carro") === tipoAtivo);
+
+  renderFilterOptions(modelosDoTipo);
+  buildGrid(modelosDoTipo);
   applyFilters();
 
   homeEl.classList.remove("open");
@@ -1572,6 +1654,25 @@ function showBrand(brand) {
   headerEl.classList.add("open");
   layoutEl.classList.add("open");
   window.scrollTo(0, 0);
+}
+
+function renderTipoTabs(tiposDisponiveis, tipoAtivo) {
+  tipoTabs.innerHTML = "";
+  if (tiposDisponiveis.length <= 1) {
+    tipoTabs.style.display = "none";
+    return;
+  }
+  tipoTabs.style.display = "flex";
+  tiposDisponiveis.forEach((t) => {
+    const btn = document.createElement("button");
+    btn.className = "tipo-tab" + (t === tipoAtivo ? " active" : "");
+    btn.textContent = TIPO_VEICULO_LABEL[t] || t;
+    btn.addEventListener("click", () => {
+      if (t === currentTipoVeiculo) return;
+      goTo({ v: "marca", slug: currentBrand.slug, tipo: t }, brandName);
+    });
+    tipoTabs.appendChild(btn);
+  });
 }
 
 brandRow.addEventListener("click", () => { history.back(); });
@@ -1593,7 +1694,8 @@ function buildGrid(models) {
   grid.innerHTML = "";
   cardEntries = [];
 
-  models.forEach((item, modelIndex) => {
+  models.forEach((item) => {
+    const modelIndex = currentBrand.models.indexOf(item);
     let current = 0;
 
     const card = document.createElement("div");
@@ -1604,11 +1706,23 @@ function buildGrid(models) {
     const vtName = `vt-${currentBrand.slug}-${slugify(item.model)}`;
     photoWrap.style.viewTransitionName = vtName;
 
+    const photoImg = document.createElement("img");
+    photoImg.src = placeholderImgUrl(`${currentBrand.slug}-${slugify(item.model)}`, 400, 300);
+    photoImg.loading = "lazy";
+    photoImg.alt = "";
+    photoImg.addEventListener("error", () => photoImg.remove());
+    photoWrap.appendChild(photoImg);
+
+    const photoScrim = document.createElement("div");
+    photoScrim.className = "photo-scrim";
+    photoWrap.appendChild(photoScrim);
+
     const yearBadge = document.createElement("div");
     yearBadge.className = "year-badge";
     photoWrap.appendChild(yearBadge);
 
     const photoLabel = document.createElement("span");
+    photoLabel.className = "photo-label";
     photoLabel.textContent = item.model;
     photoWrap.appendChild(photoLabel);
 
@@ -1815,7 +1929,19 @@ function showDetail(item, versionIndex) {
   const v = item.versions[versionIndex];
 
   detailHero.style.viewTransitionName = `vt-${currentBrand.slug}-${slugify(item.model)}`;
-  detailHero.textContent = `${item.model} — ${versionLabel(v)}`;
+  detailHero.innerHTML = "";
+  const heroImg = document.createElement("img");
+  heroImg.src = placeholderImgUrl(`${currentBrand.slug}-${slugify(item.model)}`, 800, 450);
+  heroImg.alt = "";
+  heroImg.addEventListener("error", () => heroImg.remove());
+  const heroScrim = document.createElement("div");
+  heroScrim.className = "photo-scrim";
+  const heroLabel = document.createElement("span");
+  heroLabel.className = "photo-label";
+  heroLabel.textContent = `${item.model} — ${versionLabel(v)}`;
+  detailHero.appendChild(heroImg);
+  detailHero.appendChild(heroScrim);
+  detailHero.appendChild(heroLabel);
   detailTitle.textContent = item.model;
   detailVersion.textContent = versionLabel(v);
   specMotor.textContent = v.motor.join(", ");
@@ -1826,7 +1952,12 @@ function showDetail(item, versionIndex) {
   for (let i = 0; i < 6; i++) {
     const g = document.createElement("div");
     g.className = "gallery-item";
-    g.textContent = "foto " + (i + 1);
+    const img = document.createElement("img");
+    img.src = placeholderImgUrl(`${currentBrand.slug}-${slugify(item.model)}-${i}`, 300, 300);
+    img.loading = "lazy";
+    img.alt = "";
+    img.addEventListener("error", () => { img.remove(); g.textContent = "foto " + (i + 1); });
+    g.appendChild(img);
     detailGallery.appendChild(g);
   }
 

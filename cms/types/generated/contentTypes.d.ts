@@ -588,6 +588,9 @@ export interface ApiModeloModelo extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     regiaoOrigem: Schema.Attribute.String;
     statusProducao: Schema.Attribute.String;
+    tipoVeiculo: Schema.Attribute.Enumeration<
+      ['Carro', 'Moto', 'Caminh\u00E3o']
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

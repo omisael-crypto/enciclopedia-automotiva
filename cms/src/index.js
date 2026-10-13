@@ -55,9 +55,53 @@ module.exports = {
     await publicarRascunhosDoImportador(strapi);
     await limparModelosEVersoesDuplicados(strapi);
     await corrigirImportacaoChevroletPrematura(strapi);
+    await classificarTipoVeiculo(strapi);
     await importarListasDeModelosPorMarca(strapi);
   },
 };
+
+// Deriva a aba de navegacao (Carro/Moto/Caminhao) a partir da categoria (texto
+// livre de carroceria) e do tipo da marca. Picapes (S10, Hilux, Silverado...)
+// ficam em "Carro" — decisao do usuario, so vira "Caminhao" quando a
+// categoria menciona caminhao explicitamente (ex: "Caminhão / Picape", que na
+// pesquisa indica veiculo comercial pesado, nao a picape de passeio atual).
+function derivarTipoVeiculo(categoria, marcaTipo) {
+  const cat = (categoria || '').toLowerCase();
+  if (cat.includes('caminhão') || cat.includes('caminhao')) return 'Caminhão';
+  if (marcaTipo === 'Motos' || cat.includes('moto')) return 'Moto';
+  return 'Carro';
+}
+
+// Preenche tipoVeiculo em todo modelo que ainda nao tem (importado antes do
+// campo existir). Le a tabela inteira de uma vez via db.query (evita o bug ja
+// visto de paginar enquanto o filtro usado na propria pagina muda a cada
+// atualizacao) e atualiza cada linha (rascunho e publicada) no status que ela
+// propria ja tinha.
+async function classificarTipoVeiculo(strapi) {
+  const markerPath = path.join(__dirname, 'data', '.tipo_veiculo_classificado');
+  if (fs.existsSync(markerPath)) return;
+
+  const modelos = await strapi.db.query('api::modelo.modelo').findMany({
+    select: ['id', 'documentId', 'categoria', 'tipoVeiculo', 'publishedAt'],
+    populate: { marca: { select: ['tipo'] } },
+  });
+
+  let atualizados = 0;
+  for (const m of modelos) {
+    if (m.tipoVeiculo) continue;
+    const tipoVeiculo = derivarTipoVeiculo(m.categoria, m.marca && m.marca.tipo);
+    await strapi.documents('api::modelo.modelo').update({
+      documentId: m.documentId,
+      data: { tipoVeiculo },
+      status: m.publishedAt ? 'published' : 'draft',
+    });
+    atualizados++;
+    if (atualizados % 500 === 0) strapi.log.info(`Classificação de tipo de veículo: ${atualizados} atualizados...`);
+  }
+
+  strapi.log.info(`Classificação de tipo de veículo concluída: ${atualizados} modelos atualizados.`);
+  fs.writeFileSync(markerPath, new Date().toISOString());
+}
 
 // Correcao pontual: a primeira versao do CSV de modelos da Chevrolet (189
 // linhas, consolidada) rodou antes do usuario pedir a versao sem consolidar
@@ -145,8 +189,8 @@ async function importarListasDeModelosPorMarca(strapi) {
       }
 
       const lowerMarca = marcaNome.toLowerCase();
-      let marcaDocId = marcaCache[lowerMarca];
-      if (!marcaDocId) {
+      let marcaInfo = marcaCache[lowerMarca];
+      if (!marcaInfo) {
         let marcaDoc = await strapi.documents('api::marca.marca').findFirst({ filters: { nome: marcaNome } });
         if (!marcaDoc) {
           marcaDoc = await strapi.documents('api::marca.marca').create({
@@ -154,9 +198,10 @@ async function importarListasDeModelosPorMarca(strapi) {
             status: 'published',
           });
         }
-        marcaDocId = marcaDoc.documentId;
-        marcaCache[lowerMarca] = marcaDocId;
+        marcaInfo = { documentId: marcaDoc.documentId, tipo: marcaDoc.tipo };
+        marcaCache[lowerMarca] = marcaInfo;
       }
+      const marcaDocId = marcaInfo.documentId;
 
       const existente = await strapi.documents('api::modelo.modelo').findFirst({
         filters: { nome: modeloNome, marca: marcaDocId },
@@ -170,6 +215,7 @@ async function importarListasDeModelosPorMarca(strapi) {
         data: {
           nome: modeloNome,
           categoria: linha.categoria || undefined,
+          tipoVeiculo: derivarTipoVeiculo(linha.categoria, marcaInfo.tipo),
           regiaoOrigem: linha.regiao_origem || undefined,
           statusProducao: linha.status_producao || undefined,
           marca: marcaDocId,
@@ -349,7 +395,7 @@ async function importModelosGeracoes(strapi) {
 
   const existingMarcas = await strapi.documents('api::marca.marca').findMany({ pagination: { pageSize: 500 } });
   const marcaCache = {};
-  existingMarcas.forEach((m) => { marcaCache[m.nome.toLowerCase()] = m.documentId; });
+  existingMarcas.forEach((m) => { marcaCache[m.nome.toLowerCase()] = { documentId: m.documentId, tipo: m.tipo }; });
 
   async function resolverMarca(nomeCsv) {
     const lower = nomeCsv.toLowerCase();
@@ -359,8 +405,9 @@ async function importModelosGeracoes(strapi) {
     const nova = await strapi.documents('api::marca.marca').create({
       data: { nome: nomeCsv, tipo: 'Carros', iniciais: gerarIniciais(nomeCsv) },
     });
-    marcaCache[lower] = nova.documentId;
-    return nova.documentId;
+    const info = { documentId: nova.documentId, tipo: 'Carros' };
+    marcaCache[lower] = info;
+    return info;
   }
 
   const modeloCache = {};
@@ -384,7 +431,8 @@ async function importModelosGeracoes(strapi) {
       continue;
     }
 
-    const marcaDocId = await resolverMarca(marcaNome);
+    const marcaInfo = await resolverMarca(marcaNome);
+    const marcaDocId = marcaInfo.documentId;
     const modeloKey = marcaDocId + '|' + modeloNome.toLowerCase();
     let modeloDocId = modeloCache[modeloKey];
     if (!modeloDocId) {
@@ -395,7 +443,12 @@ async function importModelosGeracoes(strapi) {
         modeloDocId = existente.documentId;
       } else {
         const novoModelo = await strapi.documents('api::modelo.modelo').create({
-          data: { nome: modeloNome, categoria: carroceria || undefined, marca: marcaDocId },
+          data: {
+            nome: modeloNome,
+            categoria: carroceria || undefined,
+            tipoVeiculo: derivarTipoVeiculo(carroceria, marcaInfo.tipo),
+            marca: marcaDocId,
+          },
         });
         modeloDocId = novoModelo.documentId;
       }
@@ -663,7 +716,12 @@ async function seedExampleData(strapi) {
 
     for (const m of b.modelos) {
       const modelo = await strapi.documents('api::modelo.modelo').create({
-        data: { nome: m.nome, categoria: m.categoria, marca: marca.documentId },
+        data: {
+          nome: m.nome,
+          categoria: m.categoria,
+          tipoVeiculo: derivarTipoVeiculo(m.categoria, b.tipo),
+          marca: marca.documentId,
+        },
         status: 'published',
       });
 
