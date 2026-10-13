@@ -1207,7 +1207,7 @@ async function loadBrandsFromStrapi() {
   const query =
     "populate[historicoDonos][populate]=grupo" +
     "&populate[modelos][populate][versoes][populate]=motorizacoes" +
-    "&pagination[pageSize]=100";
+    "&pagination[pageSize]=500";
   const res = await fetch(`${API_URL}/api/marcas?${query}`);
   if (!res.ok) throw new Error("Strapi respondeu com erro " + res.status);
   const json = await res.json();

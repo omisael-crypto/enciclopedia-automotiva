@@ -8,3 +8,4 @@ cms/*.log
 cms/.env
 cms/.strapi-updater.json
 cms/.node22/
+*.log

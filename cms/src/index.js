@@ -1,5 +1,7 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
 const gruposMarcasSeed = require('./data/grupos-marcas-seed');
 
 module.exports = {
@@ -47,9 +49,151 @@ module.exports = {
     await importGruposMarcas(strapi);
     await fixSituacao(strapi);
     await limparDonosDuplicados(strapi);
+    await importModelosGeracoes(strapi);
     await fixMissingSlugs(strapi);
+    await despublicarMarcasPrematuras(strapi);
   },
 };
+
+// Correcao pontual: antes do bugfix do fixMissingSlugs, uma tentativa
+// interrompida da importacao de modelos/geracoes publicou 10 marcas novas
+// sem querer. Essas marcas devem ficar como rascunho ate revisao, igual as
+// outras criadas pela mesma importacao.
+const MARCAS_PARA_DESPUBLICAR = ['AC', 'Arcfox', 'Ariel', 'Aro', 'Artega', 'Aurus', 'BAIC', 'Borgward', 'Bristol', 'Bufori'];
+async function despublicarMarcasPrematuras(strapi) {
+  for (const nome of MARCAS_PARA_DESPUBLICAR) {
+    const publicado = await strapi.documents('api::marca.marca').findFirst({ filters: { nome }, status: 'published' });
+    if (publicado) {
+      await strapi.documents('api::marca.marca').unpublish({ documentId: publicado.documentId });
+    }
+  }
+}
+
+// Apelidos entre o nome usado no CSV de pesquisa e o nome ja cadastrado via
+// o PDF de grupos/marcas (mesma marca, grafias diferentes) — evita criar
+// marcas duplicadas.
+const ALIASES_MARCA = {
+  ds: 'DS Automobiles', lada: 'Lada (AvtoVAZ)', geely: 'Geely Auto', kgm: 'KG Mobility',
+  maybach: 'Mercedes-Maybach', mitsubishi: 'Mitsubishi Motors', 'rolls-royce': 'Rolls-Royce Motor Cars',
+  volvo: 'Volvo Cars', scout: 'Scout Motors', saab: 'Saab Automobile', byd: 'BYD Auto',
+  mg: 'MG Motor', lotus: 'Lotus Cars',
+};
+
+function parseCsvLine(line) {
+  const result = [];
+  let cur = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (line[i + 1] === '"') { cur += '"'; i++; } else inQuotes = false;
+      } else {
+        cur += c;
+      }
+    } else if (c === '"') {
+      inQuotes = true;
+    } else if (c === ',') {
+      result.push(cur);
+      cur = '';
+    } else {
+      cur += c;
+    }
+  }
+  result.push(cur);
+  return result;
+}
+
+// Importa o catalogo de modelos/geracoes gerado pela pesquisa do usuario
+// (CatalogoAutomotivo). Tudo entra como RASCUNHO (nao publicado) porque a
+// propria fonte marca os dados como "RASCUNHO_PENDENTE_VALIDACAO" — fica
+// disponivel pra revisar no painel, sem aparecer no site publico ainda.
+async function importModelosGeracoes(strapi) {
+  const csvPath = path.join(__dirname, 'data', 'modelos_e_geracoes.csv');
+  const markerPath = path.join(__dirname, 'data', '.modelos_geracoes_importado');
+  if (!fs.existsSync(csvPath) || fs.existsSync(markerPath)) return;
+
+  const lines = fs.readFileSync(csvPath, 'utf8').split('\n').filter((l) => l.trim().length > 0);
+  const header = parseCsvLine(lines[0]);
+  const col = (cols, name) => cols[header.indexOf(name)];
+
+  const existingMarcas = await strapi.documents('api::marca.marca').findMany({ pagination: { pageSize: 500 } });
+  const marcaCache = {};
+  existingMarcas.forEach((m) => { marcaCache[m.nome.toLowerCase()] = m.documentId; });
+
+  async function resolverMarca(nomeCsv) {
+    const lower = nomeCsv.toLowerCase();
+    if (marcaCache[lower]) return marcaCache[lower];
+    const aliasAlvo = ALIASES_MARCA[lower];
+    if (aliasAlvo && marcaCache[aliasAlvo.toLowerCase()]) return marcaCache[aliasAlvo.toLowerCase()];
+    const nova = await strapi.documents('api::marca.marca').create({
+      data: { nome: nomeCsv, tipo: 'Carros', iniciais: gerarIniciais(nomeCsv) },
+    });
+    marcaCache[lower] = nova.documentId;
+    return nova.documentId;
+  }
+
+  const modeloCache = {};
+  let criados = 0;
+  let ignorados = 0;
+
+  for (let i = 1; i < lines.length; i++) {
+    const cols = parseCsvLine(lines[i]);
+    const marcaNome = (col(cols, 'marca') || '').trim();
+    const modeloNome = (col(cols, 'modelo') || '').trim();
+    const geracao = (col(cols, 'geracao') || '').trim();
+    const anoInicio = parseInt(col(cols, 'ano_inicio_geracao'), 10);
+    const anoFimRaw = (col(cols, 'ano_fim_geracao') || '').trim();
+    const anoFim = anoFimRaw ? parseInt(anoFimRaw, 10) : null;
+    const carroceria = (col(cols, 'carroceria') || '').trim();
+    const fonte = (col(cols, 'fonte') || '').trim();
+    const licenca = (col(cols, 'licenca_dados') || '').trim();
+
+    if (!marcaNome || !modeloNome || !geracao || !Number.isFinite(anoInicio)) {
+      ignorados++;
+      continue;
+    }
+
+    const marcaDocId = await resolverMarca(marcaNome);
+    const modeloKey = marcaDocId + '|' + modeloNome.toLowerCase();
+    let modeloDocId = modeloCache[modeloKey];
+    if (!modeloDocId) {
+      const existente = await strapi.documents('api::modelo.modelo').findFirst({
+        filters: { nome: modeloNome, marca: marcaDocId },
+      });
+      if (existente) {
+        modeloDocId = existente.documentId;
+      } else {
+        const novoModelo = await strapi.documents('api::modelo.modelo').create({
+          data: { nome: modeloNome, categoria: carroceria || undefined, marca: marcaDocId },
+        });
+        modeloDocId = novoModelo.documentId;
+      }
+      modeloCache[modeloKey] = modeloDocId;
+    }
+
+    const decada = Math.floor(anoInicio / 10) * 10 + 's';
+
+    await strapi.documents('api::versao.versao').create({
+      data: {
+        geracao,
+        anoInicio,
+        anoFim,
+        decada,
+        modelo: modeloDocId,
+        fontes: fonte ? `${fonte} | Licença: ${licenca}` : undefined,
+      },
+    });
+
+    criados++;
+    if (criados % 500 === 0) strapi.log.info(`Importação modelos/gerações: ${criados} versões criadas...`);
+  }
+
+  strapi.log.info(
+    `Importação modelos/gerações concluída: ${criados} versões criadas como rascunho (pendente revisão), ${ignorados} linhas ignoradas por falta de dados.`
+  );
+  fs.writeFileSync(markerPath, new Date().toISOString());
+}
 
 // O seed de exemplo (5 marcas) e a importacao do PDF se sobrepoem em
 // Chevrolet/Opel/Fiat/Honda/Volkswagen, criando periodos de dono repetidos.
@@ -192,10 +336,11 @@ async function fixMissingSlugs(strapi) {
   for (const api of ['grupo', 'marca']) {
     const docs = await strapi.documents(`api::${api}.${api}`).findMany({ filters: { slug: { $null: true } } });
     for (const doc of docs) {
+      // Preserva o status atual (rascunho continua rascunho) — só corrige o slug.
       await strapi.documents(`api::${api}.${api}`).update({
         documentId: doc.documentId,
         data: { slug: slugify(doc.nome) },
-        status: 'published',
+        status: doc.publishedAt ? 'published' : 'draft',
       });
     }
   }
