@@ -12,6 +12,8 @@
   "attributes": {
     "nome": { "type": "string", "required": true },
     "categoria": { "type": "string" },
+    "regiaoOrigem": { "type": "string" },
+    "statusProducao": { "type": "string" },
     "marca": {
       "type": "relation",
       "relation": "manyToOne",

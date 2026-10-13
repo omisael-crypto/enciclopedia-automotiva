@@ -529,6 +529,9 @@ export interface ApiMarcaMarca extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    curiosidades: Schema.Attribute.Text;
+    fontes: Schema.Attribute.Text;
+    historia: Schema.Attribute.Text;
     historicoDonos: Schema.Attribute.Relation<
       'oneToMany',
       'api::marca-dono.marca-dono'
@@ -583,6 +586,8 @@ export interface ApiModeloModelo extends Struct.CollectionTypeSchema {
     marca: Schema.Attribute.Relation<'manyToOne', 'api::marca.marca'>;
     nome: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
+    regiaoOrigem: Schema.Attribute.String;
+    statusProducao: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

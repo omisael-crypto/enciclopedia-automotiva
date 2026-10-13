@@ -54,8 +54,148 @@ module.exports = {
     await despublicarMarcasPrematuras(strapi);
     await publicarRascunhosDoImportador(strapi);
     await limparModelosEVersoesDuplicados(strapi);
+    await corrigirImportacaoChevroletPrematura(strapi);
+    await importarListasDeModelosPorMarca(strapi);
   },
 };
+
+// Correcao pontual: a primeira versao do CSV de modelos da Chevrolet (189
+// linhas, consolidada) rodou antes do usuario pedir a versao sem consolidar
+// (338 linhas). Remove os modelos/versoes criados por aquela primeira
+// tentativa e limpa o marcador, pra lista nova (338) poder ser importada.
+async function corrigirImportacaoChevroletPrematura(strapi) {
+  const markerPath = path.join(__dirname, 'data', '.chevrolet-premature-fix');
+  if (fs.existsSync(markerPath)) return;
+
+  const cutoff = new Date('2026-10-13T12:46:42.000Z');
+  const modelos = await strapi.db.query('api::modelo.modelo').findMany({
+    select: ['id', 'documentId', 'nome', 'createdAt'],
+    populate: { marca: { select: ['nome'] } },
+  });
+
+  const paraRemover = modelos.filter((m) => m.marca && m.marca.nome === 'Chevrolet' && new Date(m.createdAt) >= cutoff);
+
+  let versoesRemovidas = 0;
+  if (paraRemover.length > 0) {
+    const idsModelo = new Set(paraRemover.map((m) => m.id));
+    const versoes = await strapi.db.query('api::versao.versao').findMany({
+      select: ['id', 'documentId'],
+      populate: { modelo: { select: ['id'] } },
+    });
+    for (const v of versoes) {
+      if (v.modelo && idsModelo.has(v.modelo.id)) {
+        await strapi.documents('api::versao.versao').delete({ documentId: v.documentId });
+        versoesRemovidas++;
+      }
+    }
+    for (const m of paraRemover) {
+      await strapi.documents('api::modelo.modelo').delete({ documentId: m.documentId });
+    }
+  }
+
+  const importedMarker = path.join(__dirname, 'data', 'chevrolet-modelos.csv.importado');
+  if (fs.existsSync(importedMarker)) fs.unlinkSync(importedMarker);
+
+  strapi.log.info(`Correção Chevrolet prematura: ${paraRemover.length} modelos e ${versoesRemovidas} versões removidos.`);
+  fs.writeFileSync(markerPath, new Date().toISOString());
+}
+
+function parseCsvSimples(texto) {
+  const linhas = texto.split('\n').filter((l) => l.trim().length > 0);
+  const header = parseCsvLine(linhas[0]);
+  return linhas.slice(1).map((linha) => {
+    const cols = parseCsvLine(linha);
+    const obj = {};
+    header.forEach((h, i) => { obj[h.trim()] = (cols[i] || '').trim(); });
+    return obj;
+  });
+}
+
+// Importa listas de modelos por marca (nivel 1: so o nome do modelo, sem
+// geracao/ficha tecnica ainda). Qualquer arquivo cms/src/data/*-modelos.csv
+// e processado uma vez (marcado por um arquivo .importado ao lado) e pode
+// ser reaproveitado pra qualquer marca nova que o usuario mandar depois.
+// Pula modelos que ja existem (pelo nome, sem diferenciar maiusculas) pra
+// nao duplicar o que ja veio da importacao de modelos_e_geracoes.csv. Cria
+// uma versao "placeholder" por modelo novo com o intervalo de anos geral —
+// a pesquisa por geracao especifica fica pra uma etapa futura.
+async function importarListasDeModelosPorMarca(strapi) {
+  const dataDir = path.join(__dirname, 'data');
+  const arquivos = fs.readdirSync(dataDir).filter((f) => f.endsWith('-modelos.csv'));
+
+  for (const arquivo of arquivos) {
+    const markerPath = path.join(dataDir, arquivo + '.importado');
+    if (fs.existsSync(markerPath)) continue;
+
+    const linhas = parseCsvSimples(fs.readFileSync(path.join(dataDir, arquivo), 'utf8'));
+    let criados = 0;
+    let ignorados = 0;
+
+    const marcaCache = {};
+
+    for (const linha of linhas) {
+      const marcaNome = linha.marca;
+      const modeloNome = linha.nome_modelo;
+      const anoInicio = parseInt(linha.ano_inicio, 10);
+      const anoFim = linha.ano_fim ? parseInt(linha.ano_fim, 10) : null;
+
+      if (!marcaNome || !modeloNome || !Number.isFinite(anoInicio)) {
+        ignorados++;
+        continue;
+      }
+
+      const lowerMarca = marcaNome.toLowerCase();
+      let marcaDocId = marcaCache[lowerMarca];
+      if (!marcaDocId) {
+        let marcaDoc = await strapi.documents('api::marca.marca').findFirst({ filters: { nome: marcaNome } });
+        if (!marcaDoc) {
+          marcaDoc = await strapi.documents('api::marca.marca').create({
+            data: { nome: marcaNome, tipo: 'Carros', iniciais: gerarIniciais(marcaNome) },
+            status: 'published',
+          });
+        }
+        marcaDocId = marcaDoc.documentId;
+        marcaCache[lowerMarca] = marcaDocId;
+      }
+
+      const existente = await strapi.documents('api::modelo.modelo').findFirst({
+        filters: { nome: modeloNome, marca: marcaDocId },
+      });
+      if (existente) {
+        ignorados++;
+        continue;
+      }
+
+      const novoModelo = await strapi.documents('api::modelo.modelo').create({
+        data: {
+          nome: modeloNome,
+          categoria: linha.categoria || undefined,
+          regiaoOrigem: linha.regiao_origem || undefined,
+          statusProducao: linha.status_producao || undefined,
+          marca: marcaDocId,
+        },
+        status: 'published',
+      });
+
+      const decada = Math.floor(anoInicio / 10) * 10 + 's';
+      await strapi.documents('api::versao.versao').create({
+        data: {
+          geracao: 'Produção',
+          anoInicio,
+          anoFim,
+          decada,
+          modelo: novoModelo.documentId,
+        },
+        status: 'published',
+      });
+
+      criados++;
+    }
+
+    strapi.log.info(`Importação ${arquivo}: ${criados} modelos novos criados, ${ignorados} ignorados (já existiam ou sem dados).`);
+    fs.writeFileSync(markerPath, new Date().toISOString());
+  }
+}
 
 // Durante a depuracao do bugfix acima, processos duplicados do Strapi
 // rodaram a importacao de modelos/geracoes ao mesmo tempo mais de uma vez,

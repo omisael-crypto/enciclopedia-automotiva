@@ -1,0 +1,339 @@
+marca,nome_modelo,categoria,regiao_origem,ano_inicio,ano_fim,status_producao
+Chevrolet,Series C Classic Six,Sedã / Tourer,EUA,1911,1913,Descontinuado
+Chevrolet,Light Six,Tourer,EUA,1914,1915,Descontinuado
+Chevrolet,Series H (H-2 / H-4),Tourer / Roadster,EUA,1914,1916,Descontinuado
+Chevrolet,Series 490,Coupé / Tourer,EUA,1915,1922,Descontinuado
+Chevrolet,Series F,Tourer,EUA,1917,1917,Descontinuado
+Chevrolet,Series D,Tourer,EUA,1917,1918,Descontinuado
+Chevrolet,Series FA,Tourer / Roadster,EUA,1917,1918,Descontinuado
+Chevrolet,Model T (One-Ton Truck),Caminhão,EUA,1918,1928,Descontinuado
+Chevrolet,Series FB,Tourer / Sedã,EUA,1919,1922,Descontinuado
+Chevrolet,Superior Series,Sedã / Coupé,EUA,1923,1926,Descontinuado
+Chevrolet,Series M Copper-Cooled,Sedã,EUA,1923,1923,Descontinuado
+Chevrolet,Series AA Capitol,Sedã / Coupé,EUA,1927,1927,Descontinuado
+Chevrolet,Series AB National,Sedã / Coupé,EUA,1928,1928,Descontinuado
+Chevrolet,Utility Express,Caminhão,EUA,1928,1928,Descontinuado
+Chevrolet,Series AC International,Sedã / Coupé,EUA,1929,1929,Descontinuado
+Chevrolet,Series AD Universal,Sedã / Coupé,EUA,1930,1930,Descontinuado
+Chevrolet,Series AE Independence,Sedã / Coupé,EUA,1931,1931,Descontinuado
+Chevrolet,Series BA Confederate,Sedã / Coupé,EUA,1932,1932,Descontinuado
+Chevrolet,Series CA Eagle / Master,Sedã / Coupé,EUA,1933,1933,Descontinuado
+Chevrolet,Standard Six,Sedã / Coupé,EUA,1933,1936,Descontinuado
+Chevrolet,Master Deluxe,Sedã / Coupé,EUA,1935,1940,Descontinuado
+Chevrolet,Suburban,SUV / Perua,EUA,1935,,Em produção
+Chevrolet,Master 85,Sedã / Coupé,EUA,1939,1940,Descontinuado
+Chevrolet,Special Deluxe,Sedã / Conversível,EUA,1940,1942,Descontinuado
+Chevrolet,AK Series,Picape / Caminhão,EUA,1941,1947,Descontinuado
+Chevrolet,Deluxe,Sedã / Perua,EUA,1941,1952,Descontinuado
+Chevrolet,Fleetline,Sedã,EUA,1942,1952,Descontinuado
+Chevrolet,Fleetmaster,Sedã / Conversível,EUA,1946,1948,Descontinuado
+Chevrolet,Stylemaster,Sedã / Coupé,EUA,1946,1948,Descontinuado
+Chevrolet,Advance Design Pickups,Picape,EUA,1947,1955,Descontinuado
+Chevrolet,Styleline,Sedã / Coupé,EUA,1949,1952,Descontinuado
+Chevrolet,Bel Air,Sedã / Coupé / Conversível,EUA,1950,1981,Descontinuado
+Chevrolet,150 (One-Fifty),Sedã / Coupé,EUA,1953,1957,Descontinuado
+Chevrolet,210 (Two-Ten),Sedã / Perua,EUA,1953,1957,Descontinuado
+Chevrolet,Corvette,Esportivo / Conversível,EUA,1953,,Em produção
+Chevrolet,Townsman,Perua,EUA,1953,1972,Descontinuado
+Chevrolet,Nomad,Perua,EUA,1955,1972,Descontinuado
+Chevrolet,Task Force Pickups,Picape,EUA,1955,1959,Descontinuado
+Chevrolet,LCF Series (Histórico),Caminhão,EUA,1955,1959,Descontinuado
+Chevrolet,Biscayne,Sedã,EUA,1958,1975,Descontinuado
+Chevrolet,Impala,Sedã / Coupé / Conversível,EUA,1958,2020,Descontinuado
+Chevrolet,Brookwood,Perua,EUA,1958,1972,Descontinuado
+Chevrolet,Yeoman,Perua,EUA,1958,1958,Descontinuado
+Chevrolet,El Camino,Picape,EUA,1959,1987,Descontinuado
+Chevrolet,Kingswood,Perua,EUA,1959,1972,Descontinuado
+Chevrolet,Parkwood,Perua,EUA,1959,1961,Descontinuado
+Chevrolet,Corvair,Sedã / Coupé / Conversível / Van,EUA,1960,1969,Descontinuado
+Chevrolet,Corvair 95 Greenbrier,Van / Picape,EUA,1961,1965,Descontinuado
+Chevrolet,C/K Series,Picape,EUA,1960,2002,Descontinuado
+Chevrolet,Chevy II / Nova,Sedã / Coupé / Hatchback,EUA,1962,1988,Descontinuado
+Chevrolet,Chevelle,Sedã / Coupé / Perua,EUA,1964,1977,Descontinuado
+Chevrolet,Malibu,Sedã,EUA,1964,,Em produção
+Chevrolet,G-Series Van,Van,EUA,1964,1996,Descontinuado
+Chevrolet,Veraneio,SUV,Brasil,1964,1994,Descontinuado
+Chevrolet,Caprice,Sedã,EUA,1965,2017,Descontinuado
+Chevrolet,C-10 / C-14,Picape,Brasil,1964,1989,Descontinuado
+Chevrolet,Camaro,Coupé / Conversível / Esportivo,EUA,1966,2024,Descontinuado
+Chevrolet,400,Sedã,Argentina,1962,1974,Descontinuado
+Chevrolet,Opala,Sedã / Coupé,Brasil,1968,1992,Descontinuado
+Chevrolet,K5 Blazer,SUV,EUA,1969,1994,Descontinuado
+Chevrolet,Constantia,Sedã,África do Sul,1969,1978,Descontinuado
+Chevrolet,Commando,Sedã / Perua,África do Sul,1969,1978,Descontinuado
+Chevrolet,Monte Carlo,Coupé,EUA,1970,2007,Descontinuado
+Chevrolet,Vega,Hatchback / Coupé / Perua,EUA,1970,1977,Descontinuado
+Chevrolet,Chevelle Laguna,Coupé / Sedã,EUA,1973,1976,Descontinuado
+Chevrolet,LUV,Picape,EUA / América do Sul,1972,2005,Descontinuado
+Chevrolet,Chevette,Hatchback / Sedã,Brasil / EUA,1973,1998,Descontinuado
+Chevrolet,Caravan,Perua,Brasil,1975,1992,Descontinuado
+Chevrolet,Monza 2+2,Hatchback / Coupé,EUA,1975,1980,Descontinuado
+Chevrolet,Firenza,Hatchback / Coupé,África do Sul,1975,1979,Descontinuado
+Chevrolet,Chevair,Sedã,África do Sul,1976,1981,Descontinuado
+Chevrolet,Titan,Caminhão,EUA,1970,1980,Descontinuado
+Chevrolet,Bison,Caminhão,EUA,1977,1988,Descontinuado
+Chevrolet,Bruin,Caminhão,EUA,1978,1988,Descontinuado
+Chevrolet,Step-Van,Van,EUA,1970,1999,Descontinuado
+Chevrolet,Chevy Hatch,Hatchback,Austrália,1976,1980,Descontinuado
+Chevrolet,Citation,Hatchback / Coupé,EUA,1979,1985,Descontinuado
+Chevrolet,Kodiak / TopKick,Caminhão,EUA,1980,2009,Descontinuado
+Chevrolet,Ascona,Sedã,África do Sul,1980,1986,Descontinuado
+Chevrolet,Cavalier,Sedã / Coupé / Conversível,EUA,1981,2005,Descontinuado
+Chevrolet,Celebrity,Sedã / Perua / Coupé,EUA,1982,1990,Descontinuado
+Chevrolet,S-10 Pickup,Picape,EUA,1982,2004,Descontinuado
+Chevrolet,S-10 Blazer,SUV,EUA,1983,2005,Descontinuado
+Chevrolet,Monza,Hatchback / Sedã,Brasil,1982,1996,Descontinuado
+Chevrolet,Marajó,Perua,Brasil,1980,1989,Descontinuado
+Chevrolet,Chevy 500,Picape,Brasil,1983,1994,Descontinuado
+Chevrolet,Spectrum,Hatchback / Sedã,EUA,1985,1988,Descontinuado
+Chevrolet,Sprint,Hatchback,EUA,1984,1988,Descontinuado
+Chevrolet,Astro,Van,EUA,1985,2005,Descontinuado
+Chevrolet,D-20 / C-20 / A-20,Picape,Brasil,1985,1996,Descontinuado
+Chevrolet,Bonanza,SUV,Brasil,1989,1994,Descontinuado
+Chevrolet,Corsica,Sedã / Hatchback,EUA,1987,1996,Descontinuado
+Chevrolet,Beretta,Coupé,EUA,1987,1996,Descontinuado
+Chevrolet,Tracker,SUV,Global,1989,,Em produção
+Chevrolet,Kadett,Hatchback / Conversível,Brasil,1989,1998,Descontinuado
+Chevrolet,Ipanema,Perua,Brasil,1989,1997,Descontinuado
+Chevrolet,Lumina,Sedã / Coupé,EUA,1989,2001,Descontinuado
+Chevrolet,Lumina APV,Van,EUA,1989,1996,Descontinuado
+Chevrolet,Metro,Hatchback / Sedã,EUA,1992,2001,Descontinuado
+Chevrolet,Prizm,Sedã,EUA,1998,2002,Descontinuado
+Chevrolet,Omega,Sedã,Brasil,1992,1998,Descontinuado
+Chevrolet,Suprema,Perua,Brasil,1993,1996,Descontinuado
+Chevrolet,Vectra,Sedã / Hatchback,Brasil,1993,2011,Descontinuado
+Chevrolet,Corsa,Hatchback / Sedã / Perua / Picape,Brasil / Europa,1994,2012,Descontinuado
+Chevrolet,Classic,Sedã,Brasil,1995,2016,Descontinuado
+Chevrolet,S10,Picape,Brasil,1995,,Em produção
+Chevrolet,Blazer,SUV,Brasil,1995,2011,Descontinuado
+Chevrolet,Tahoe,SUV,EUA,1995,,Em produção
+Chevrolet,Express,Van,EUA,1996,,Em produção
+Chevrolet,Venture,Van,EUA,1997,2005,Descontinuado
+Chevrolet,Silverado,Picape,EUA / Global,1998,,Em produção
+Chevrolet,Grand Vitara,SUV,América do Sul,1998,2003,Descontinuado
+Chevrolet,Astra,Hatchback / Sedã / Perua,Brasil,1998,2011,Descontinuado
+Chevrolet,Alto,Hatchback,Colômbia,1999,2003,Descontinuado
+Chevrolet,Cassia,Sedã,Colômbia,1999,2002,Descontinuado
+Chevrolet,Esteem,Sedã / Perua,Colômbia,1998,2004,Descontinuado
+Chevrolet,Wagon R+,Van,Colômbia,1999,2003,Descontinuado
+Chevrolet,Exclusive,Hatchback,Guatemala,1998,2003,Descontinuado
+Chevrolet,Celta,Hatchback,Brasil,2000,2015,Descontinuado
+Chevrolet,Zafira,Van,Brasil,2001,2012,Descontinuado
+Chevrolet,Meriva,Van,Brasil,2002,2012,Descontinuado
+Chevrolet,Avalanche,Picape,EUA,2001,2013,Descontinuado
+Chevrolet,TrailBlazer,SUV,EUA,2001,2008,Descontinuado
+Chevrolet,Aveo,Hatchback / Sedã,Global,2002,,Em produção
+Chevrolet,Sonic,Hatchback / Sedã,Global,2011,2020,Descontinuado
+Chevrolet,Optra,Sedã / Hatchback / Perua,Ásia / México,2002,2014,Descontinuado
+Chevrolet,Vivant,Van,Ásia,2002,2008,Descontinuado
+Chevrolet,Nabira,Van,Ásia,2000,2008,Descontinuado
+Chevrolet,SSR,Picape / Conversível,EUA,2003,2006,Descontinuado
+Chevrolet,Montana,Picape,Brasil,2003,,Em produção
+Chevrolet,Colorado,Picape,EUA / Global,2004,,Em produção
+Chevrolet,Equinox,SUV,Global,2004,,Em produção
+Chevrolet,Cobalt,Sedã / Coupé,EUA,2004,2010,Descontinuado
+Chevrolet,Epica,Sedã,Europa / Ásia,2004,2011,Descontinuado
+Chevrolet,Spark,Hatchback,Global,2005,2022,Descontinuado
+Chevrolet,Beat,Hatchback / Sedã,Global,2010,2021,Descontinuado
+Chevrolet,Uplander,Van,EUA,2005,2009,Descontinuado
+Chevrolet,HHR,Perua / SUV,EUA,2005,2011,Descontinuado
+Chevrolet,Captiva,SUV,Global,2006,2018,Descontinuado
+Chevrolet,Prisma,Sedã,Brasil,2006,2019,Descontinuado
+Chevrolet,Winstorm,SUV,Coreia do Sul,2006,2011,Descontinuado
+Chevrolet,Lova,Sedã,China,2006,2011,Descontinuado
+Chevrolet,Cruze,Sedã / Hatchback / Perua,Global,2008,2023,Descontinuado
+Chevrolet,Traverse,SUV,EUA,2008,,Em produção
+Chevrolet,Agile,Hatchback,Brasil,2009,2016,Descontinuado
+Chevrolet,Volt,Hatchback,EUA,2010,2019,Descontinuado
+Chevrolet,Orlando,Van / SUV,Ásia / Europa,2010,2023,Descontinuado
+Chevrolet,N200,Van,América Latina / Ásia,2010,2015,Descontinuado
+Chevrolet,N300,Van,América Latina / Ásia,2010,,Em produção
+Chevrolet,Cobalt (América Latina),Sedã,Brasil / Uzbequistão,2011,2020,Descontinuado
+Chevrolet,Trailblazer,SUV,Brasil / Ásia,2012,,Em produção
+Chevrolet,Spin,Van,Brasil,2012,,Em produção
+Chevrolet,Onix,Hatchback,Brasil / América Latina,2012,,Em produção
+Chevrolet,Onix Plus,Sedã,Brasil / América Latina,2019,,Em produção
+Chevrolet,Enjoy,Van,Índia,2013,2017,Descontinuado
+Chevrolet,SS,Sedã,EUA,2013,2017,Descontinuado
+Chevrolet,City Express,Van,EUA,2014,2018,Descontinuado
+Chevrolet,Sail,Sedã / Hatchback,China,2010,,Em produção
+Chevrolet,Move,Van,América Latina,2015,,Em produção
+Chevrolet,Bolt EV,Hatchback,Global,2016,2023,Descontinuado
+Chevrolet,N400,Van,América Latina,2019,,Em produção
+Chevrolet,Blazer (Crossover),SUV,EUA,2018,,Em produção
+Chevrolet,Monza (China),Sedã,China / México,2019,,Em produção
+Chevrolet,Groove,SUV,América Latina / Oriente Médio,2020,,Em produção
+Chevrolet,Menlo,SUV,China,2020,,Em produção
+Chevrolet,Bolt EUV,SUV,Global,2021,2023,Descontinuado
+Chevrolet,S10 Max,Picape,México,2021,,Em produção
+Chevrolet,Seeker,SUV,China / EUA,2022,,Em produção
+Chevrolet,Blazer EV,SUV,Global,2023,,Em produção
+Chevrolet,Equinox EV,SUV,Global,2023,,Em produção
+Chevrolet,Silverado EV,Picape,EUA,2024,,Em produção
+Chevrolet,LCF Series (Comercial),Caminhão,EUA,2016,,Em produção
+Chevrolet,Grand Blazer,SUV,Brasil / Argentina,1998,2001,Descontinuado
+Chevrolet,Tavera,SUV / Van,Índia,2001,2017,Descontinuado
+Chevrolet,Super Carry,Picape / Van,Colômbia,1985,2020,Descontinuado
+Chevrolet,Damas,Van,Coreia do Sul,2000,2011,Descontinuado
+Chevrolet,Labo,Picape,Coreia do Sul,2000,2011,Descontinuado
+Chevrolet,Nexia,Sedã,Uzbequistão,1995,2016,Descontinuado
+Chevrolet,Lacetti,Sedã / Hatchback,Uzbequistão / Europa,2002,2020,Descontinuado
+Chevrolet,Chevy,Hatchback / Sedã / Picape,México,1994,2012,Descontinuado
+Chevrolet,Caprice PPV,Sedã,EUA,2011,2017,Descontinuado
+Chevrolet,Trooper,SUV,América do Sul,1988,2002,Descontinuado
+Chevrolet,Rodeo,SUV,Colômbia,1992,2004,Descontinuado
+Chevrolet,D-Max,Picape,América do Sul,2003,2020,Descontinuado
+Chevrolet,Niva,SUV,Rússia,1998,2020,Descontinuado
+Chevrolet,Beauville,Van,EUA,1970,1995,Descontinuado
+Chevrolet,ChevyVan,Van,EUA,1964,1996,Descontinuado
+Chevrolet,D-40,Caminhão,Brasil,1985,1997,Descontinuado
+Chevrolet,6000,Caminhão,Brasil,1989,1996,Descontinuado
+Chevrolet,11000,Caminhão,Brasil,1989,1996,Descontinuado
+Chevrolet,12000,Caminhão,Brasil,1989,1996,Descontinuado
+Chevrolet,14000,Caminhão,Brasil,1989,1996,Descontinuado
+Chevrolet,Series L,Sedã / Tourer,EUA,1915,1915,Descontinuado
+Chevrolet,Series V,Sedã / Tourer,EUA,1915,1915,Descontinuado
+Chevrolet,Series M,Sedã,EUA,1923,1923,Descontinuado
+Chevrolet,Master,Sedã / Coupé,EUA,1933,1942,Descontinuado
+Chevrolet,Master Deluxe Coupe,Coupé,EUA,1935,1940,Descontinuado
+Chevrolet,Special Deluxe Station Wagon,Perua,EUA,1940,1942,Descontinuado
+Chevrolet,Series 3000,Caminhão,EUA,1947,1955,Descontinuado
+Chevrolet,Series 4000,Caminhão,EUA,1947,1955,Descontinuado
+Chevrolet,Series 5000,Caminhão,EUA,1947,1955,Descontinuado
+Chevrolet,Viking,Caminhão,EUA,1955,1959,Descontinuado
+Chevrolet,Spartan,Caminhão,EUA,1955,1959,Descontinuado
+Chevrolet,Loadmaster,Caminhão,EUA,1947,1955,Descontinuado
+Chevrolet,Thriftmaster,Caminhão / Picape,EUA,1947,1955,Descontinuado
+Chevrolet,Step-Van King,Van,EUA,1965,1999,Descontinuado
+Chevrolet,Almaz,SUV,Indonésia,2019,,Em produção
+Chevrolet,Hector,SUV,Índia,2019,,Em produção
+Chevrolet,Wuling Sunshine,Van,China,2002,,Em produção
+Chevrolet,Hongguang,Van / MPV,China,2010,,Em produção
+Chevrolet,Baojun 510,SUV,China,2017,2021,Descontinuado
+Chevrolet,Baojun 530,SUV,China,2018,,Em produção
+Chevrolet,1700,Sedã,África do Sul,1972,1978,Descontinuado
+Chevrolet,2500,Sedã,África do Sul,1969,1978,Descontinuado
+Chevrolet,3800,Sedã,África do Sul,1969,1978,Descontinuado
+Chevrolet,4100,Sedã,África do Sul,1969,1978,Descontinuado
+Chevrolet,Firenza Can-Am,Coupé,África do Sul,1973,1973,Descontinuado
+Chevrolet,Kommando,Sedã / Perua,África do Sul,1969,1978,Descontinuado
+Chevrolet,Gemini,Hatchback / Sedã,Austrália / Ásia,1975,1989,Descontinuado
+Chevrolet,Barina,Hatchback,Austrália,1985,2018,Descontinuado
+Chevrolet,Samurai,Jipe 4x4,América do Sul,1988,2004,Descontinuado
+Chevrolet,Vitara 2P,SUV Compacto,América do Sul,1990,2000,Descontinuado
+Chevrolet,Gentra,Sedã Compacto,Uzbequistão / Coreia do Sul,2005,2015,Descontinuado
+Chevrolet,Corsa B,Hatchback / Sedã / Picape,Brasil / México,1994,2012,Descontinuado
+Chevrolet,Corsa C,Hatchback / Sedã,Brasil,2002,2012,Descontinuado
+Chevrolet,Royum,Sedã Executivo,China,2005,2007,Descontinuado
+Chevrolet,Caprice Classic,Sedã,EUA,1977,1996,Descontinuado
+Chevrolet,Holden Monaro (Lumina CSV),Coupé,Oriente Médio,2001,2006,Descontinuado
+Chevrolet,Holden Commodore (Lumina),Sedã / Perua,Oriente Médio / África do Sul,1998,2011,Descontinuado
+Chevrolet,Holden Statesman (Caprice),Sedã Executivo,Oriente Médio,1999,2017,Descontinuado
+Chevrolet,Wizard,SUV,Ásia / América do Sul,1998,2004,Descontinuado
+Chevrolet,Bighorn,SUV 4x4,Ásia / América do Sul,1992,2002,Descontinuado
+Chevrolet,D-Max Crew Cab,Picape,América do Sul,2003,2020,Descontinuado
+Chevrolet,Ignis,Subcompacto Crossover,Japão,2001,2008,Descontinuado
+Chevrolet,Solio (MW),Microvan,Japão,2000,2010,Descontinuado
+Chevrolet,Tico,Subcompacto,América Central,1998,2003,Descontinuado
+Chevrolet,Cielo,Sedã / Hatchback,Leste Europeu / Uzbequistão,1995,2008,Descontinuado
+Chevrolet,Tacuma,Minivan,Europa,2000,2008,Descontinuado
+Chevrolet,Kalos,Hatchback / Sedã,Europa / Ásia,2002,2008,Descontinuado
+Chevrolet,Evanda,Sedã Médio,Europa,2002,2006,Descontinuado
+Chevrolet,Tosca,Sedã Médio,Coreia do Sul,2006,2011,Descontinuado
+Chevrolet,Matiz,Subcompacto,Europa / Ásia,2005,2010,Descontinuado
+Chevrolet,Almaz RS,SUV,Indonésia,2021,,Em produção
+Chevrolet,Enjoy MPV,Minivan,Índia,2013,2017,Descontinuado
+Chevrolet,Lova RV,Perua / Hatchback,China,2016,2019,Descontinuado
+Chevrolet,Sail 3,Sedã Compacto,China,2014,2019,Descontinuado
+Chevrolet,Aveo 3,Hatchback / Sedã,México / América Latina,2023,,Em produção
+Chevrolet,Groove Premier,SUV,América Latina,2020,,Em produção
+Chevrolet,Onix Sedan,Sedã Compacto,China / América Latina,2019,,Em produção
+Chevrolet,Onix Tracker,SUV Compacto,China / América Latina,2019,,Em produção
+Chevrolet,C/K 10,Picape,EUA,1960,1987,Descontinuado
+Chevrolet,C/K 20,Picape,EUA,1960,1987,Descontinuado
+Chevrolet,C/K 30,Picape,EUA,1960,1987,Descontinuado
+Chevrolet,K10 4x4,Picape,EUA,1960,1987,Descontinuado
+Chevrolet,K20 4x4,Picape,EUA,1960,1987,Descontinuado
+Chevrolet,K30 4x4,Picape,EUA,1960,1987,Descontinuado
+Chevrolet,R10 Suburban,SUV,EUA,1987,1991,Descontinuado
+Chevrolet,V10 Suburban,SUV,EUA,1987,1991,Descontinuado
+Chevrolet,R20 Suburban,SUV,EUA,1987,1991,Descontinuado
+Chevrolet,V20 Suburban,SUV,EUA,1987,1991,Descontinuado
+Chevrolet,R30 Dually,Picape,EUA,1987,1991,Descontinuado
+Chevrolet,V30 Dually,Picape,EUA,1987,1991,Descontinuado
+Chevrolet,C1500,Picape,EUA,1988,1999,Descontinuado
+Chevrolet,K1500,Picape,EUA,1988,1999,Descontinuado
+Chevrolet,C2500,Picape,EUA,1988,2000,Descontinuado
+Chevrolet,K2500,Picape,EUA,1988,2000,Descontinuado
+Chevrolet,C3500,Picape,EUA,1988,2000,Descontinuado
+Chevrolet,K3500,Picape,EUA,1988,2000,Descontinuado
+Chevrolet,Silverado 1500,Picape,EUA,1999,,Em produção
+Chevrolet,Silverado 2500HD,Picape,EUA,1999,,Em produção
+Chevrolet,Silverado 3500HD,Picape,EUA,2001,,Em produção
+Chevrolet,Silverado SS,Picape Esportiva,EUA,2003,2006,Descontinuado
+Chevrolet,Silverado Hybrid,Picape Híbrida,EUA,2004,2013,Descontinuado
+Chevrolet,Silverado ZR2,Picape Off-road,EUA,2022,,Em produção
+Chevrolet,Colorado ZR2,Picape Off-road,EUA,2017,,Em produção
+Chevrolet,Colorado Z71,Picape,EUA,2004,,Em produção
+Chevrolet,S10 High Country,Picape Luxo,Brasil,2015,,Em produção
+Chevrolet,S10 Z71,Picape Off-road,Brasil,2021,,Em produção
+Chevrolet,S10 Midnight,Picape Especial,Brasil,2018,,Em produção
+Chevrolet,S10 Cabine Dupla,Picape,Brasil,1996,,Em produção
+Chevrolet,S10 Cabine Simples,Picape,Brasil,1995,,Em produção
+Chevrolet,D-20 Custom,Picape,Brasil,1985,1996,Descontinuado
+Chevrolet,D-20 Conquest,Picape,Brasil,1992,1996,Descontinuado
+Chevrolet,D-20 Turbo,Picape,Brasil,1992,1996,Descontinuado
+Chevrolet,C-20 Custom,Picape,Brasil,1985,1996,Descontinuado
+Chevrolet,A-20 Custom,Picape,Brasil,1985,1996,Descontinuado
+Chevrolet,Veraneio Custom,SUV,Brasil,1989,1994,Descontinuado
+Chevrolet,Bonanza Custom,SUV,Brasil,1989,1994,Descontinuado
+Chevrolet,Opala SS,Coupé / Sedã,Brasil,1971,1980,Descontinuado
+Chevrolet,Opala Comodoro,Sedã / Coupé,Brasil,1975,1992,Descontinuado
+Chevrolet,Opala Diplomata,Sedã / Coupé,Brasil,1980,1992,Descontinuado
+Chevrolet,Caravan SS,Perua,Brasil,1978,1980,Descontinuado
+Chevrolet,Caravan Comodoro,Perua,Brasil,1980,1992,Descontinuado
+Chevrolet,Caravan Diplomata,Perua,Brasil,1986,1992,Descontinuado
+Chevrolet,Chevette Hatch,Hatchback,Brasil,1979,1987,Descontinuado
+Chevrolet,Chevette GP,Fastback,Brasil,1975,1978,Descontinuado
+Chevrolet,Chevette SR,Fastback,Brasil,1981,1982,Descontinuado
+Chevrolet,Chevette Junior,Hatchback,Brasil,1992,1993,Descontinuado
+Chevrolet,Chevette DL,Sedã,Brasil,1991,1993,Descontinuado
+Chevrolet,Monza S/R,Hatchback Esportivo,Brasil,1985,1988,Descontinuado
+Chevrolet,Monza Classic SE,Sedã,Brasil,1986,1993,Descontinuado
+Chevrolet,Monza 500 EF,Sedã,Brasil,1990,1990,Descontinuado
+Chevrolet,Monza Hi-Tech,Sedã,Brasil,1993,1994,Descontinuado
+Chevrolet,Kadett GS,Hatchback Esportivo,Brasil,1989,1991,Descontinuado
+Chevrolet,Kadett GSi,Hatchback / Conversível,Brasil,1991,1995,Descontinuado
+Chevrolet,Kadett Sport,Hatchback,Brasil,1995,1997,Descontinuado
+Chevrolet,Ipanema Sol,Perua,Brasil,1993,1993,Descontinuado
+Chevrolet,Ipanema Wave,Perua,Brasil,1996,1996,Descontinuado
+Chevrolet,Corsa GSi,Hatchback Esportivo,Brasil,1994,1996,Descontinuado
+Chevrolet,Corsa Wind,Hatchback,Brasil,1994,2002,Descontinuado
+Chevrolet,Corsa Super,Hatchback / Sedã,Brasil,1996,2002,Descontinuado
+Chevrolet,Astra GL,Hatchback / Perua,Brasil,1995,2011,Descontinuado
+Chevrolet,Astra GLS,Hatchback / Sedã,Brasil,1995,2005,Descontinuado
+Chevrolet,Astra GSi,Hatchback Esportivo,Brasil,2003,2005,Descontinuado
+Chevrolet,Vectra GSi,Sedã Esportivo,Brasil,1993,1996,Descontinuado
+Chevrolet,Vectra Challenge,Sedã,Brasil,2001,2002,Descontinuado
+Chevrolet,Vectra Expression,Sedã,Brasil,2001,2005,Descontinuado
+Chevrolet,Vectra GT,Hatchback,Brasil,2007,2011,Descontinuado
+Chevrolet,Vectra GT-X,Hatchback Esportivo,Brasil,2007,2011,Descontinuado
+Chevrolet,Omega CD,Sedã Executivo,Brasil,1992,1998,Descontinuado
+Chevrolet,Omega GLS,Sedã Executivo,Brasil,1992,1997,Descontinuado
+Chevrolet,Suprema CD,Perua Executiva,Brasil,1993,1996,Descontinuado
+Chevrolet,Suprema GLS,Perua Executiva,Brasil,1993,1996,Descontinuado
+Chevrolet,Celta Energy,Hatchback,Brasil,2003,2004,Descontinuado
+Chevrolet,Meriva SS,Van Esportiva,Brasil,2006,2008,Descontinuado
+Chevrolet,Corsa SS,Hatchback Esportivo,Brasil,2006,2009,Descontinuado
+Chevrolet,Cobalt SS,Coupé / Sedã Esportivo,EUA,2005,2010,Descontinuado
+Chevrolet,HHR SS,Perua / Van Turbo,EUA,2008,2010,Descontinuado
+Chevrolet,TrailBlazer SS,SUV Performance V8,EUA,2006,2009,Descontinuado
+Chevrolet,Corvette Z06,Esportivo Track,EUA,2001,,Em produção
+Chevrolet,Corvette ZR1,Superesportivo High-Performance,EUA,1990,,Em produção
+Chevrolet,Corvette Grand Sport,Esportivo Track,EUA,1996,2019,Descontinuado
+Chevrolet,Corvette E-Ray,Esportivo Híbrido AWD,EUA,2024,,Em produção
+Chevrolet,Corvette Stingray,Esportivo,EUA,1963,,Em produção
+Chevrolet,Camaro ZL1,Muscle Car Supercharged,EUA,2012,2024,Descontinuado
+Chevrolet,Camaro Z28,Muscle Car Track,EUA,1967,2015,Descontinuado
+Chevrolet,Camaro SS,Muscle Car V8,EUA,1967,2024,Descontinuado
+Chevrolet,Camaro RS,Muscle Car,EUA,1967,2024,Descontinuado

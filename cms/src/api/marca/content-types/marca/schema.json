@@ -22,6 +22,15 @@
     "categoriaPrincipal": { "type": "string" },
     "paisOrigem": { "type": "string" },
     "situacao": { "type": "string" },
+    "historia": { "type": "text" },
+    "curiosidades": {
+      "type": "text",
+      "description": "Uma curiosidade por linha"
+    },
+    "fontes": {
+      "type": "text",
+      "description": "Uma fonte por linha, formato: descricao | url"
+    },
     "logo": {
       "type": "media",
       "multiple": false,
