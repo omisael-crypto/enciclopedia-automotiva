@@ -52,8 +52,98 @@ module.exports = {
     await importModelosGeracoes(strapi);
     await fixMissingSlugs(strapi);
     await despublicarMarcasPrematuras(strapi);
+    await publicarRascunhosDoImportador(strapi);
+    await limparModelosEVersoesDuplicados(strapi);
   },
 };
+
+// Durante a depuracao do bugfix acima, processos duplicados do Strapi
+// rodaram a importacao de modelos/geracoes ao mesmo tempo mais de uma vez,
+// criando modelos (e suas versoes) repetidos para a mesma marca. Mantem o
+// registro mais antigo de cada grupo marca+nome e remove o resto.
+async function limparModelosEVersoesDuplicados(strapi) {
+  const markerPath = path.join(__dirname, 'data', '.modelos_duplicados_limpos');
+  if (fs.existsSync(markerPath)) return;
+
+  const modelos = await strapi.db.query('api::modelo.modelo').findMany({
+    select: ['id', 'documentId', 'nome'],
+    populate: { marca: { select: ['id'] } },
+  });
+
+  const grupos = new Map();
+  modelos.forEach((m) => {
+    if (!m.marca) return;
+    const chave = m.marca.id + '|' + m.nome.toLowerCase();
+    if (!grupos.has(chave)) grupos.set(chave, []);
+    grupos.get(chave).push(m);
+  });
+
+  const idsModeloParaRemover = new Set();
+  for (const [, lista] of grupos) {
+    if (lista.length <= 1) continue;
+    lista.sort((a, b) => a.id - b.id);
+    lista.slice(1).forEach((m) => idsModeloParaRemover.add(m.id));
+  }
+
+  let versoesRemovidas = 0;
+  if (idsModeloParaRemover.size > 0) {
+    const todasVersoes = await strapi.db.query('api::versao.versao').findMany({
+      select: ['id', 'documentId'],
+      populate: { modelo: { select: ['id'] } },
+    });
+    for (const v of todasVersoes) {
+      if (v.modelo && idsModeloParaRemover.has(v.modelo.id)) {
+        await strapi.documents('api::versao.versao').delete({ documentId: v.documentId });
+        versoesRemovidas++;
+      }
+    }
+  }
+
+  let modelosRemovidos = 0;
+  for (const m of modelos) {
+    if (idsModeloParaRemover.has(m.id)) {
+      await strapi.documents('api::modelo.modelo').delete({ documentId: m.documentId });
+      modelosRemovidos++;
+    }
+  }
+
+  strapi.log.info(`Limpeza de duplicatas: ${modelosRemovidos} modelos e ${versoesRemovidas} versões duplicadas removidas.`);
+  fs.writeFileSync(markerPath, new Date().toISOString());
+}
+
+// Publica em lote tudo que ainda esta em rascunho nas marcas/modelos/versoes
+// (a importacao do CSV de modelos/geracoes criou tudo como rascunho).
+// Guardado por arquivo marcador — roda uma unica vez.
+async function publicarRascunhosDoImportador(strapi) {
+  const markerPath = path.join(__dirname, 'data', '.rascunhos_publicados');
+  if (fs.existsSync(markerPath)) return;
+
+  let totalPublicados = 0;
+  for (const uid of ['api::marca.marca', 'api::modelo.modelo', 'api::versao.versao']) {
+    // strapi.db.query le a tabela direto, sem paginacao de REST — evita o
+    // problema de paginar enquanto o total de linhas muda (publicar cria uma
+    // linha nova da versao publicada, o que bagunça paginas por offset).
+    const todasLinhas = await strapi.db.query(uid).findMany({ select: ['documentId', 'publishedAt'] });
+
+    const statusPorDocumento = new Map();
+    todasLinhas.forEach((r) => {
+      const jaTinhaPublicado = statusPorDocumento.get(r.documentId) || false;
+      statusPorDocumento.set(r.documentId, jaTinhaPublicado || !!r.publishedAt);
+    });
+    const pendentes = [...statusPorDocumento.entries()].filter(([, publicado]) => !publicado).map(([id]) => id);
+
+    strapi.log.info(`Publicando ${uid}: ${pendentes.length} pendentes de ${statusPorDocumento.size} documentos no total.`);
+
+    for (const documentId of pendentes) {
+      await strapi.documents(uid).publish({ documentId });
+      totalPublicados++;
+      if (totalPublicados % 500 === 0) strapi.log.info(`Publicação em lote: ${totalPublicados} registros publicados...`);
+    }
+  }
+
+  strapi.log.info(`Publicação em lote concluída: ${totalPublicados} registros publicados.`);
+  fs.writeFileSync(markerPath, new Date().toISOString());
+}
 
 // Correcao pontual: antes do bugfix do fixMissingSlugs, uma tentativa
 // interrompida da importacao de modelos/geracoes publicou 10 marcas novas
